@@ -7,12 +7,10 @@ import { auth } from "@clerk/nextjs/server";
 import DeleteConfirmation from "./DeleteConfirmation";
 
 const EventCard = ({
-  key,
   event,
   hasOrderLink,
   hidePrice,
 }: {
-  key: string;
   event: IEvent;
   hasOrderLink?: boolean;
   hidePrice?: boolean;
@@ -20,7 +18,7 @@ const EventCard = ({
   const { sessionClaims } = auth();
   const isEventCreator = sessionClaims?.userID === event.organizer.clerkId;
   return (
-    <li key={key} className="flex justify-center">
+    <li key={event._id} className="flex justify-center">
       <div className="group relative flex min-h-[380px] w-full max-w-[400px] flex-col overflow-hidden rounded-xl bg-white shadow-md transition-all hover:shadow-lg md:min-h-[438px]">
         <Link
           href={`/events/${event._id}`}
@@ -43,10 +41,7 @@ const EventCard = ({
             <DeleteConfirmation eventId={event._id} />
           </div>
         )}
-        <Link
-          href={`/events/${event._id}`}
-          className="flex min-h-[230px] flex-col gap-3 p-5 md:gap-4"
-        >
+        <div className="flex min-h-[230px] flex-col gap-3 p-5 md:gap-4">
           {!hidePrice && (
             <div className="flex gap-2">
               <span className="p-semibold-14 w-min rounded-full bg-green-100 px-4 py-1 text-green-900">
@@ -62,13 +57,20 @@ const EventCard = ({
               ? formatDateTime(event.startDateTime).dateTime
               : null}
           </p>
-          <p className="p-medium-16 lg:p-medium-20 line-clamp-2 flex-1 text-black">
-            {event.title}
-          </p>
-          <div className="flex-between w-full">
-            <p className="p-medium-14 md:p-medium-16 text-grey-500">
-              {event.organizer.firstName} {event.organizer.lastName}
+          <Link href={`/events/${event._id}`}>
+            <p className="p-medium-16 lg:p-medium-20 line-clamp-2 flex-1 text-black">
+              {event.title}
             </p>
+          </Link>
+          <div className="flex-between w-full">
+            <Link
+              className="p-medium-16 md:p-medium-16 text-grey-500 hover:text-primary-500"
+              href={
+                isEventCreator ? `/profile` : `/profile/${event.organizer._id}`
+              }
+            >
+              {event.organizer.firstName} {event.organizer.lastName}
+            </Link>
             {hasOrderLink && (
               <Link
                 href={`/orders?eventId=${event._id}`}
@@ -85,7 +87,7 @@ const EventCard = ({
               </Link>
             )}
           </div>
-        </Link>
+        </div>
       </div>
     </li>
   );

@@ -25,7 +25,6 @@ const Collection = ({
 
               return (
                 <EventCard
-                  key={event._id}
                   event={event}
                   hasOrderLink={hasOrderLink}
                   hidePrice={hidePrice}
