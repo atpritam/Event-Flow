@@ -1,6 +1,7 @@
 import { model, models, Schema, Document } from "mongoose";
 
 export interface IEvent extends Document {
+  _id: string;
   title: string;
   description: string;
   location: string;
@@ -8,11 +9,16 @@ export interface IEvent extends Document {
   imageUrl: string;
   startDateTime?: Date;
   endDateTime?: Date;
-  price: number;
+  price?: string;
   isFree?: boolean;
   url?: string;
-  category: Schema.Types.ObjectId;
-  organizer: Schema.Types.ObjectId;
+  category: { _id: string; name: string };
+  organizer: {
+    _id: string;
+    firstName: string;
+    lastName: string;
+    clerkId: string;
+  };
 }
 
 const EventSchema = new Schema({
@@ -23,7 +29,7 @@ const EventSchema = new Schema({
   imageUrl: { type: String, required: true },
   startDateTime: { type: Date, required: true, default: Date.now },
   endDateTime: { type: Date, required: true, default: Date.now },
-  price: { type: Number, required: true },
+  price: { type: String, required: false },
   isFree: { type: Boolean, default: false },
   url: { type: String },
   category: { type: Schema.Types.ObjectId, ref: "Category" },

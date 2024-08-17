@@ -6,22 +6,7 @@ import User from "../database/models/user.model";
 import Order from "@/lib/database/models/order.model";
 import Event from "@/lib/database/models/event.model";
 import { revalidatePath } from "next/cache";
-
-interface CreateUserParams {
-  clerkId: string;
-  email: string;
-  username: string | null;
-  firstName: string | null;
-  lastName: string | null;
-  photo: string;
-}
-
-interface UpdateUserParams {
-  username: string | null;
-  firstName: string | null;
-  lastName: string | null;
-  photo: string;
-}
+import { CreateUserParams, UpdateUserParams } from "@/app/types";
 
 export const createUser = async (user: CreateUserParams) => {
   try {
@@ -32,6 +17,23 @@ export const createUser = async (user: CreateUserParams) => {
     return JSON.parse(JSON.stringify(newUser));
   } catch (error) {
     handleError(error);
+  }
+};
+
+export const getUserIDByClerkId = async (clerkId: string) => {
+  try {
+    await connectToDatabase();
+
+    const user = await User.findOne({ clerkId });
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    return user._id.toString();
+  } catch (error) {
+    console.error("Error fetching user by Clerk ID:", error);
+    throw new Error("Failed to retrieve user ID");
   }
 };
 
