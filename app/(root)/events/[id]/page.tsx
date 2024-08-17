@@ -1,17 +1,24 @@
 import { SearchParamProps } from "@/app/types";
+import CheckoutButton from "@/components/shared/CheckoutButton";
 import Collection from "@/components/shared/Collection";
 import {
   getEventById,
   getRelatedEventsByCategory,
 } from "@/lib/actions/event.actions";
 import { formatDateTime } from "@/lib/utils";
+import { auth } from "@clerk/nextjs/server";
+import { Check } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import React from "react";
 
 const EventDetails = async ({ params, searchParams }: SearchParamProps) => {
   const eventId = params.id;
 
   const event = await getEventById(eventId);
+
+  const { sessionClaims } = auth();
+  const isEventCreator = sessionClaims?.userID === event.organizer.clerkId;
 
   const relatedEvents = await getRelatedEventsByCategory({
     categoryId: event.category._id,
@@ -44,13 +51,20 @@ const EventDetails = async ({ params, searchParams }: SearchParamProps) => {
                 </div>
                 <p className="p-medium-18 ml-2 mt-2 sm:mt-0">
                   by{" "}
-                  <span className="text-primary-500">
+                  <Link
+                    className=" text-primary-500"
+                    href={
+                      isEventCreator
+                        ? `/profile`
+                        : `/profile/${event.organizer._id}`
+                    }
+                  >
                     {event.organizer.firstName} {event.organizer.lastName}
-                  </span>
+                  </Link>
                 </p>
               </div>
             </div>
-            {/* Checkout Button */}
+            <CheckoutButton event={event} />
             <div className="flex flex-col gap-5 ">
               <div className="flex gap-2 md:gap-3">
                 <Image

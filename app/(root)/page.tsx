@@ -5,12 +5,12 @@ import Image from "next/image";
 import Link from "next/link";
 
 export default async function Home() {
-  // const events = await getAllEvents({
-  //   query: "",
-  //   category: "",
-  //   limit: 6,
-  //   page: 1,
-  // });
+  const events = await getAllEvents({
+    query: "",
+    category: "",
+    limit: 6,
+    page: 1,
+  });
 
   return (
     <>
@@ -48,7 +48,7 @@ export default async function Home() {
         <div className="flex w-full flex-col gap-5 md:flex-row">
           Search Category Filter
         </div>
-        {/* <Collection
+        <Collection
           data={events?.data}
           emptyTitle="No events found"
           emptyStateSubtext="Please check back later."
@@ -56,7 +56,7 @@ export default async function Home() {
           limit={6}
           page={1}
           totalPages={2}
-        /> */}
+        />
       </section>
     </>
   );
