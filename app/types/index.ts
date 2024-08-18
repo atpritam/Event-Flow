@@ -156,7 +156,7 @@ export type CollectionProps = {
   emptyStateSubtext: string;
   collectionType?: "All" | "Events_Organized" | "My_Tickets";
   limit: number;
-  page: number | string;
-  totalPages?: number | string;
+  page: number;
+  totalPages?: number;
   urlParamName?: string;
 };

@@ -7,22 +7,20 @@ import React from "react";
 import { Plus } from "lucide-react";
 import { getEventsByUser } from "@/lib/actions/event.actions";
 import { redirect } from "next/navigation";
+import { SearchParamProps } from "@/app/types";
 
-interface ProfilePageTypes {
-  params: {
-    userId: string;
-  };
-}
-
-const ProfilePage = async ({ params }: ProfilePageTypes) => {
-  const userId = params.userId;
+const ProfilePage = async ({ params, searchParams }: SearchParamProps) => {
+  const userId = params.id;
   const { sessionClaims } = auth();
   const currentUserClerkId = sessionClaims?.userID as string;
   const currentUserId = await getUserIDByClerkId(currentUserClerkId);
+  const isUser = currentUserId === userId;
 
-  if (currentUserId === userId) {
+  if (isUser) {
     redirect("/profile");
   }
+
+  const eventsPage = Number(searchParams?.eventsPage) || 1;
 
   const organizedEvents = await getEventsByUser({
     userId,
@@ -37,7 +35,8 @@ const ProfilePage = async ({ params }: ProfilePageTypes) => {
           <h3 className="h3-bold text-center sm:text-left">Events Organized</h3>
           <Button asChild className="button hidden sm:flex">
             <Link href="/events/create">
-              <Plus className="mr-1" /> <span className="p-medium-18">New</span>
+              <Plus className="mr-1" />{" "}
+              <span className="p-medium-18">Create</span>
             </Link>
           </Button>
         </div>
@@ -49,9 +48,9 @@ const ProfilePage = async ({ params }: ProfilePageTypes) => {
           emptyStateSubtext="Go create some events!"
           collectionType="Events_Organized"
           limit={3}
-          page={1}
+          page={eventsPage}
           urlParamName="eventsPage"
-          totalPages={2}
+          totalPages={organizedEvents?.totalPages}
         />
       </section>
     </>

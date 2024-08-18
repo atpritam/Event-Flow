@@ -7,7 +7,6 @@ import {
 } from "@/lib/actions/event.actions";
 import { formatDateTime } from "@/lib/utils";
 import { auth } from "@clerk/nextjs/server";
-import { Check } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
@@ -115,9 +114,9 @@ const EventDetails = async ({ params, searchParams }: SearchParamProps) => {
           emptyTitle="No related events found"
           emptyStateSubtext="Please check back later."
           collectionType="All"
-          limit={6}
-          page={1}
-          totalPages={2}
+          limit={3}
+          page={searchParams.page as unknown as number}
+          totalPages={relatedEvents?.totalPages}
         />
       </section>
     </>

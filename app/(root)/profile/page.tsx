@@ -6,21 +6,35 @@ import Link from "next/link";
 import React from "react";
 import { Plus } from "lucide-react";
 import { getEventsByUser } from "@/lib/actions/event.actions";
+import { getOrdersByUser } from "@/lib/actions/order.action";
+import { IOrder } from "@/lib/database/models/order.model";
+import { SearchParamProps } from "@/app/types";
 
 interface ProfilePageTypes {
   params: {
     userId: string;
   };
 }
-const ProfilePage = async () => {
+const ProfilePage = async ({ searchParams }: SearchParamProps) => {
   const { sessionClaims } = auth();
   const currentUserClerkId = sessionClaims?.userID as string;
   const currentUserId = await getUserIDByClerkId(currentUserClerkId);
 
+  const ordersPage = Number(searchParams?.ordersPage) || 1;
+  const eventsPage = Number(searchParams?.eventsPage) || 1;
+
   const organizedEvents = await getEventsByUser({
     userId: currentUserId,
-    page: 1,
+    page: eventsPage,
   });
+
+  const orders = await getOrdersByUser({
+    userId: currentUserId,
+    page: ordersPage,
+    limit: 3,
+  });
+
+  const orderedEvents = orders?.data?.map((order: IOrder) => order.event) || [];
 
   return (
     <>
@@ -37,14 +51,14 @@ const ProfilePage = async () => {
       </section>
       <section className="wrapper my-8">
         <Collection
-          data={[]}
+          data={orderedEvents}
           emptyTitle="No Tickets"
           emptyStateSubtext="Your purchased tickets will appear here."
           collectionType="My_Tickets"
           limit={3}
-          page={1}
+          page={ordersPage}
           urlParamName="ordersPage"
-          totalPages={2}
+          totalPages={orders?.totalPages}
         />
       </section>
 
@@ -66,9 +80,9 @@ const ProfilePage = async () => {
           emptyStateSubtext="Go create some events!"
           collectionType="Events_Organized"
           limit={3}
-          page={1}
+          page={eventsPage}
           urlParamName="eventsPage"
-          totalPages={2}
+          totalPages={organizedEvents?.totalPages}
         />
       </section>
     </>

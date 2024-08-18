@@ -1,43 +1,75 @@
+"use client";
+
+import { useRouter, useSearchParams } from "next/navigation";
+import { formUrlQuery } from "@/lib/utils";
 import {
-  Pagination,
+  Pagination as ShadcnPagination,
   PaginationContent,
-  PaginationEllipsis,
   PaginationItem,
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
 
-interface PaginationParams {
+type PaginationProps = {
   limit: number;
-  page: number | string | undefined;
-  totalPages: number | string | undefined;
-  urlParamName: string | undefined;
-}
-const PaginationStyle = ({
-  limit,
+  page: number;
+  totalPages: number;
+  urlParamName?: string;
+};
+
+const Pagination = ({
   page,
   totalPages,
-  urlParamName,
-}: PaginationParams) => {
+  urlParamName = "page",
+}: PaginationProps) => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const onPageChange = (newPage: number) => {
+    const newUrl = formUrlQuery({
+      params: searchParams.toString(),
+      key: urlParamName,
+      value: newPage.toString(),
+    });
+    router.push(newUrl, { scroll: false });
+  };
+
   return (
-    <Pagination>
+    <ShadcnPagination className="flex justify-center gap-2 mt-4">
       <PaginationContent>
         <PaginationItem>
-          <PaginationPrevious href="#" />
+          <PaginationPrevious onClick={() => onPageChange(page - 1)} href="#" />
         </PaginationItem>
         <PaginationItem>
-          <PaginationLink href="#">1</PaginationLink>
+          <PaginationLink
+            isActive={page === 1}
+            href="#"
+            onClick={() => onPageChange(1)}
+          >
+            1
+          </PaginationLink>
         </PaginationItem>
+        {page > 2 && (
+          <PaginationItem>
+            <PaginationLink href="#" onClick={() => onPageChange(page)}>
+              {page}
+            </PaginationLink>
+          </PaginationItem>
+        )}
+        {page < totalPages && (
+          <PaginationItem>
+            <PaginationLink href="#" onClick={() => onPageChange(totalPages)}>
+              {totalPages}
+            </PaginationLink>
+          </PaginationItem>
+        )}
         <PaginationItem>
-          <PaginationEllipsis />
-        </PaginationItem>
-        <PaginationItem>
-          <PaginationNext href="#" />
+          <PaginationNext onClick={() => onPageChange(page + 1)} href="#" />
         </PaginationItem>
       </PaginationContent>
-    </Pagination>
+    </ShadcnPagination>
   );
 };
 
-export default PaginationStyle;
+export default Pagination;

@@ -70,7 +70,7 @@ const EventCard = ({
           >
             {event.organizer.firstName} {event.organizer.lastName}
           </Link>
-          {hasOrderLink && (
+          {hasOrderLink && isEventCreator && (
             <Link href={`/orders?eventId=${event._id}`} className="flex gap-2">
               <p className="text-primary-500">Order Details</p>
               <Image

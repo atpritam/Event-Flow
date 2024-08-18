@@ -13,6 +13,11 @@ import { revalidatePath } from "next/cache";
 import { connectToDatabase } from "../database";
 import Event from "../database/models/event.model";
 import User from "../database/models/user.model";
+import Category from "../database/models/category.model";
+
+const getCategoryByName = async (name: string) => {
+  return Category.findOne({ name: { $regex: name, $options: "i" } });
+};
 
 export const createEvent = async ({
   event,
@@ -58,27 +63,47 @@ export const getEventById = async (eventId: string) => {
   }
 };
 
-export const getAllEvents = async ({
+// GET ALL EVENTS
+export async function getAllEvents({
   query,
   limit = 6,
   page,
   category,
-}: GetAllEventsParams) => {
-  const conditions = {};
-  const events = await Event.find(conditions)
-    .sort({ createdAt: "desc" })
-    .skip(0)
-    .limit(limit)
-    .populate("category")
-    .populate("organizer");
+}: GetAllEventsParams) {
+  try {
+    await connectToDatabase();
 
-  const totalEvents = await Event.countDocuments(conditions);
+    const titleCondition = query
+      ? { title: { $regex: query, $options: "i" } }
+      : {};
+    const categoryCondition = category
+      ? await getCategoryByName(category)
+      : null;
+    const conditions = {
+      $and: [
+        titleCondition,
+        categoryCondition ? { category: categoryCondition._id } : {},
+      ],
+    };
 
-  return {
-    data: JSON.parse(JSON.stringify(events)),
-    totalPages: Math.ceil(totalEvents / limit),
-  };
-};
+    const skipAmount = (Number(page) - 1) * limit;
+    const events = await Event.find(conditions)
+      .sort({ createdAt: "desc" })
+      .skip(skipAmount)
+      .limit(limit)
+      .populate("category")
+      .populate("organizer");
+
+    const eventsCount = await Event.countDocuments(conditions);
+
+    return {
+      data: JSON.parse(JSON.stringify(events)),
+      totalPages: Math.ceil(eventsCount / limit),
+    };
+  } catch (error) {
+    handleError(error);
+  }
+}
 
 export async function deleteEvent({ eventId, path }: DeleteEventParams) {
   try {
