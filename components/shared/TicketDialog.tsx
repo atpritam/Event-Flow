@@ -15,7 +15,13 @@ import {
 } from "@/components/ui/alert-dialog";
 import TestQRCode from "./QRCode";
 
-const TicketDialog = ({ event }: { event: IEvent }) => {
+const TicketDialog = ({
+  event,
+  orderedEventIds,
+}: {
+  event: IEvent;
+  orderedEventIds?: { orderId: string; eventId: string }[];
+}) => {
   const qrCodeValue =
     "Thank You for Purchasing your Event ticket from Event Flow!"; // QR code content
 
@@ -40,7 +46,7 @@ const TicketDialog = ({ event }: { event: IEvent }) => {
           <AlertDialogDescription className="p-regular-16 text-grey-600">
             {/* Display QR Code */}
             <div className="flex justify-center mt-4">
-              <TestQRCode event={event} />
+              <TestQRCode event={event} orderedEventIds={orderedEventIds} />
             </div>
             {/* Display Event Details */}
             <div className="flex flex-col items-center mb-4">

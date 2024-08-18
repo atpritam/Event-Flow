@@ -36,6 +36,12 @@ const ProfilePage = async ({ searchParams }: SearchParamProps) => {
 
   const orderedEvents = orders?.data?.map((order: IOrder) => order.event) || [];
 
+  const orderedEventIds =
+    orders?.data?.map((order: IOrder) => ({
+      orderId: order._id,
+      eventId: order.event._id,
+    })) || [];
+
   return (
     <>
       {/* My Tickets */}
@@ -59,6 +65,7 @@ const ProfilePage = async ({ searchParams }: SearchParamProps) => {
           page={ordersPage}
           urlParamName="ordersPage"
           totalPages={orders?.totalPages}
+          orderedEventIds={orderedEventIds}
         />
       </section>
 

@@ -11,10 +11,12 @@ const EventCard = ({
   event,
   hasOrderLink,
   hidePrice,
+  orderedEventIds,
 }: {
   event: IEvent;
   hasOrderLink?: boolean;
   hidePrice?: boolean;
+  orderedEventIds?: { orderId: string; eventId: string }[];
 }) => {
   const { sessionClaims } = auth();
   const isEventCreator = sessionClaims?.userID === event.organizer.clerkId;
@@ -84,7 +86,9 @@ const EventCard = ({
               />
             </Link>
           )}
-          {!hasOrderLink && hidePrice && <TicketDialog event={event} />}
+          {!hasOrderLink && hidePrice && (
+            <TicketDialog event={event} orderedEventIds={orderedEventIds} />
+          )}
         </div>
       </div>
     </div>

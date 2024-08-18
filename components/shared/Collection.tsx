@@ -13,6 +13,7 @@ const Collection = ({
   page,
   totalPages,
   urlParamName,
+  orderedEventIds,
 }: CollectionProps) => {
   return (
     <>
@@ -29,6 +30,7 @@ const Collection = ({
                       event={event}
                       hasOrderLink={hasOrderLink}
                       hidePrice={hidePrice}
+                      orderedEventIds={orderedEventIds}
                     />
                   </li>
                 );

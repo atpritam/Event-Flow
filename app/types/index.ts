@@ -159,4 +159,5 @@ export type CollectionProps = {
   page: number;
   totalPages?: number;
   urlParamName?: string;
+  orderedEventIds?: { orderId: string; eventId: string }[];
 };
