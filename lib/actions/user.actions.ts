@@ -100,3 +100,20 @@ export async function deleteUser(clerkId: string) {
     handleError(error);
   }
 }
+
+export const updateUserOrders = async (order: any) => {
+  try {
+    await connectToDatabase();
+
+    const user = await User.findOne({ _id: order.buyerId });
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    user.orders.push(order._id);
+    await user.save();
+  } catch (error) {
+    handleError(error);
+  }
+};

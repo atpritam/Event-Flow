@@ -17,7 +17,7 @@ import { eventDefaultValues } from "@/constants";
 import Dropdown from "./Dropdown";
 import { Textarea } from "../ui/textarea";
 import { FileUploader } from "./FileUploader";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -27,6 +27,8 @@ import { handleError } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { createEvent, updateEvent } from "@/lib/actions/event.actions";
 import { IEvent } from "@/lib/database/models/event.model";
+import LocationInput from "./LocationInput";
+import { set } from "mongoose";
 
 interface EventFormProps {
   userId: string;
@@ -37,6 +39,9 @@ interface EventFormProps {
 const EventForm = ({ userId, type, event }: EventFormProps) => {
   const [files, setFiles] = useState<File[]>([]);
   const [dateOpen, setDateOpen] = useState(false);
+  const [startDate, setStartDate] = useState<Date | null | undefined>(null);
+  const [endDate, setEndDate] = useState<Date | null | undefined>(null);
+  let renderFlag = false;
   const initialValues =
     event && type === "Update"
       ? {
@@ -49,11 +54,19 @@ const EventForm = ({ userId, type, event }: EventFormProps) => {
             : undefined,
         }
       : eventDefaultValues;
+
   const router = useRouter();
   const form = useForm<z.infer<typeof EventFormSchema>>({
     resolver: zodResolver(EventFormSchema),
     defaultValues: initialValues,
   });
+
+  useEffect(() => {
+    if (type === "Update" && event) {
+      setStartDate(event.startDateTime ? new Date(event.startDateTime) : null);
+      setEndDate(event.endDateTime ? new Date(event.endDateTime) : null);
+    }
+  }, [type, event]);
 
   const { startUpload } = useUploadThing("imageUploader");
 
@@ -207,19 +220,10 @@ const EventForm = ({ userId, type, event }: EventFormProps) => {
             render={({ field }) => (
               <FormItem className="w-full">
                 <FormControl>
-                  <div className="flex-center overflow-hidden rounded-sm bg-grey-50 px-2">
-                    <Image
-                      src="/assets/icons/location-grey.svg"
-                      width={20}
-                      height={20}
-                      alt="location"
-                    />
-                    <Input
-                      placeholder="Event Location / Online"
-                      {...field}
-                      className="input-field"
-                    />
-                  </div>
+                  <LocationInput
+                    value={field.value}
+                    onChange={field.onChange}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -245,12 +249,17 @@ const EventForm = ({ userId, type, event }: EventFormProps) => {
                       alt="calendar"
                       className="filter-grey"
                     />
-                    <p className="ml-3 whitespace-nowrap text-grey-600">
-                      Start Date & Time
-                    </p>
+                    {!startDate ? (
+                      <p className="ml-3 whitespace-nowrap text-grey-600">
+                        Start Date & Time
+                      </p>
+                    ) : null}
                     <DatePicker
-                      selected={field.value}
-                      onChange={(date: Date | null) => field.onChange(date)}
+                      selected={startDate}
+                      onChange={(date: Date | null) => {
+                        setStartDate(date);
+                        field.onChange(date);
+                      }}
                       showTimeSelect
                       timeFormat="HH:mm"
                       timeIntervals={15}
@@ -285,12 +294,17 @@ const EventForm = ({ userId, type, event }: EventFormProps) => {
                       alt="calendar"
                       className="filter-grey"
                     />
-                    <p className="ml-3 whitespace-nowrap text-grey-600">
-                      End Date & Time
-                    </p>
+                    {!endDate ? (
+                      <p className="ml-3 whitespace-nowrap text-grey-600">
+                        End Date & Time
+                      </p>
+                    ) : null}
                     <DatePicker
-                      selected={field.value}
-                      onChange={(date: Date | null) => field.onChange(date)}
+                      selected={endDate}
+                      onChange={(date: Date | null) => {
+                        setEndDate(date);
+                        field.onChange(date);
+                      }}
                       showTimeSelect
                       timeFormat="HH:mm"
                       timeIntervals={15}

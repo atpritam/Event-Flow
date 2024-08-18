@@ -1,10 +1,11 @@
 import { IEvent } from "@/lib/database/models/event.model";
 import { formatDateTime } from "@/lib/utils";
 import Link from "next/link";
-import React from "react";
 import Image from "next/image";
 import { auth } from "@clerk/nextjs/server";
 import DeleteConfirmation from "./DeleteConfirmation";
+import { Ticket } from "lucide-react";
+import TicketDialog from "./TicketDialog";
 
 const EventCard = ({
   event,
@@ -17,6 +18,7 @@ const EventCard = ({
 }) => {
   const { sessionClaims } = auth();
   const isEventCreator = sessionClaims?.userID === event.organizer.clerkId;
+
   return (
     <div className="group relative flex min-h-[380px] w-full max-w-[400px] flex-col overflow-hidden rounded-xl bg-white shadow-md transition-all hover:shadow-lg md:min-h-[438px]">
       <Link
@@ -82,6 +84,7 @@ const EventCard = ({
               />
             </Link>
           )}
+          {!hasOrderLink && hidePrice && <TicketDialog event={event} />}
         </div>
       </div>
     </div>

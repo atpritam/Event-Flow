@@ -32,7 +32,9 @@ const ProfilePage = async ({ params, searchParams }: SearchParamProps) => {
       {/* Events Organized */}
       <section className="bg-primary-50 bg-dotted-pattern bg-cover bg-center py-5 md:py-5">
         <div className="wrapper flex items-center justify-center sm:justify-between">
-          <h3 className="h3-bold text-center sm:text-left">Events Organized</h3>
+          <h3 className="h3-bold text-center sm:text-left">
+            Events Organized by {organizedEvents?.data[0].organizer.firstName}
+          </h3>
           <Button asChild className="button hidden sm:flex">
             <Link href="/events/create">
               <Plus className="mr-1" />{" "}
