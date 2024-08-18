@@ -3,7 +3,6 @@ import { connectToDatabase } from "@/lib/database";
 import Event from "@/lib/database/models/event.model";
 import Order from "@/lib/database/models/order.model";
 import User from "@/lib/database/models/user.model";
-import mongoose from "mongoose";
 
 export async function POST(req: Request) {
   try {
@@ -27,7 +26,6 @@ export async function POST(req: Request) {
       return NextResponse.json({ isValid: false }, { status: 400 });
     }
 
-    // Respond with the relevant ticket information
     return NextResponse.json({
       isValid: true,
       ticketInfo: {

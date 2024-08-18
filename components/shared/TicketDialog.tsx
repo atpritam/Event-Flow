@@ -28,7 +28,7 @@ const TicketDialog = ({
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <button className="flex items-center gap-2 ">
+        <button className="flex items-center gap-1 ">
           <span className="text-primary-500">QR Code</span>
           <Image
             src="/assets/icons/arrow.svg"

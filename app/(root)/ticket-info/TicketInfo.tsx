@@ -1,6 +1,13 @@
 "use client";
-import React, { useEffect, useState } from "react";
+
+import React, { useEffect, useState, useRef } from "react";
 import { useSearchParams } from "next/navigation";
+import { Download, Calendar, User, Hash } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import html2canvas from "html2canvas";
+import Image from "next/image";
 
 interface TicketInfoType {
   eventId: string;
@@ -15,6 +22,8 @@ const TicketInfo = () => {
   const [ticketInfo, setTicketInfo] = useState<TicketInfoType | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const ticketRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const data = searchParams.get("data");
@@ -45,50 +54,128 @@ const TicketInfo = () => {
     }
   };
 
+  const downloadTicketAsImage = async () => {
+    if (contentRef.current) {
+      const downloadButton = document.getElementById("download-button");
+      if (downloadButton) downloadButton.style.display = "none";
+
+      const canvas = await html2canvas(contentRef.current, {
+        backgroundColor: "#ffffff",
+        scale: 2,
+      });
+
+      if (downloadButton) downloadButton.style.display = "flex";
+
+      const link = document.createElement("a");
+      link.href = canvas.toDataURL("image/png");
+      link.download = `ticket-${ticketInfo?.eventName}.png`;
+      link.click();
+    }
+  };
+
   if (isLoading) {
-    return <div className="p-4">Validating ticket...</div>;
+    return (
+      <div className="flex items-center justify-center p-4">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    );
   }
 
   if (error) {
-    return <div className="p-4 text-red-500">{error}</div>;
+    return (
+      <Card className="max-w-lg mx-auto mt-8">
+        <CardContent>
+          <h2 className="text-xl font-semibold text-red-500 mb-2">
+            Validation Error
+          </h2>
+          <p>{error}</p>
+        </CardContent>
+      </Card>
+    );
   }
 
   if (!ticketInfo) {
-    return <div className="p-4">No valid ticket information found.</div>;
+    return (
+      <Card className="max-w-lg mx-auto mt-8">
+        <CardContent>
+          <p className="text-lg">No valid ticket information found.</p>
+        </CardContent>
+      </Card>
+    );
   }
 
   return (
-    <div className="bg-white p-8 rounded-lg shadow-lg max-w-md w-full mx-auto border-4 border-dashed border-gray-300">
-      <h1 className="text-3xl font-bold mb-6 text-center">Event Ticket</h1>
-      <div className="space-y-4">
-        <div>
-          <h2 className="text-xl font-semibold">Event</h2>
-          <p>{ticketInfo.eventName}</p>
+    <div className="max-w-2xl w-full mx-auto p-4">
+      <Card ref={ticketRef} className="overflow-hidden relative">
+        <div ref={contentRef}>
+          <div className="bg-gradient-to-r from-[royalblue] to-purple-600 p-6">
+            <Image
+              src="/assets/images/logo.svg"
+              alt="logo"
+              height={100}
+              width={100}
+              className="mb-4"
+            />
+            <h1 className="text-3xl font-bold text-white">Event Ticket</h1>
+          </div>
+          <CardContent className="p-6">
+            <div className="space-y-6">
+              <div>
+                <h2 className="text-2xl font-semibold text-gray-800">
+                  {ticketInfo.eventName}
+                </h2>
+                <div className="flex items-center mt-2 text-gray-600">
+                  <Calendar className="w-5 h-5 mr-2" />
+                  <p>
+                    {new Date(ticketInfo.eventDate).toLocaleString(undefined, {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </p>
+                </div>
+              </div>
+              <Separator />
+              <div className="flex justify-between flex-col md:flex-row md:gap-0 gap-5">
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500">
+                    Attendee
+                  </h3>
+                  <div className="flex items-center mt-1">
+                    <User className="w-5 h-5 mr-2 text-gray-400" />
+                    <p className="text-lg font-medium">
+                      {ticketInfo.attendeeName}
+                    </p>
+                  </div>
+                </div>
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500">
+                    Order ID
+                  </h3>
+                  <div className="flex items-center mt-1">
+                    <Hash className="w-5 h-5 mr-2 text-gray-400" />
+                    <p className="text-lg font-medium">{ticketInfo.orderId}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="mt-8 text-center">
+              <p className="text-sm text-gray-500">
+                Thank you for your purchase!
+              </p>
+            </div>
+          </CardContent>
         </div>
-        <div>
-          <h2 className="text-xl font-semibold">Date</h2>
-          <p>
-            {new Date(ticketInfo.eventDate).toLocaleString(undefined, {
-              year: "numeric",
-              month: "numeric",
-              day: "numeric",
-              hour: "2-digit",
-              minute: "2-digit",
-            })}
-          </p>
-        </div>
-        <div>
-          <h2 className="text-xl font-semibold">Attendee</h2>
-          <p>{ticketInfo.attendeeName}</p>
-        </div>
-        <div>
-          <h2 className="text-xl font-semibold">Order ID</h2>
-          <p>{ticketInfo.orderId}</p>
-        </div>
-      </div>
-      <div className="mt-8 border-t-2 border-dashed border-gray-300 pt-4 text-center">
-        <p className="text-sm text-gray-400">Thank you for your purchase!</p>
-      </div>
+        <Button
+          id="download-button"
+          onClick={downloadTicketAsImage}
+          className="absolute top-4 right-4 bg-white text-blue-600 hover:bg-gray-100"
+        >
+          <Download className="w-5 h-5" />
+        </Button>
+      </Card>
     </div>
   );
 };
