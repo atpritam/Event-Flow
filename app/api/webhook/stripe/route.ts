@@ -1,7 +1,6 @@
 import stripe from "stripe";
 import { NextResponse } from "next/server";
 import { createOrder } from "@/lib/actions/order.action";
-import { updateUserOrders } from "@/lib/actions/user.actions";
 
 export async function POST(request: Request) {
   const body = await request.text();
@@ -33,7 +32,6 @@ export async function POST(request: Request) {
     };
 
     const newOrder = await createOrder(order);
-    await updateUserOrders(order);
     return NextResponse.json({ message: "OK", order: newOrder });
   }
 

@@ -7,7 +7,6 @@ export interface IUser extends Document {
   firstName: string;
   lastName: string;
   photo?: string;
-  orders?: { _id: string; stripeId: string; event: { _id: string } }[];
 }
 
 const UserSchema = new Schema({
@@ -17,7 +16,6 @@ const UserSchema = new Schema({
   firstName: { type: String, required: true },
   lastName: { type: String, required: true },
   photo: { type: String, required: false },
-  orders: [{ type: Schema.Types.ObjectId, ref: "Order" }],
 });
 
 const User = models.User || model("User", UserSchema);
