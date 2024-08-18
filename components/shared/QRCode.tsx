@@ -17,16 +17,21 @@ const QRCodeComponent = ({
   )?.orderId;
 
   const ticketInfo = {
-    eventName: event?.title,
-    eventDate: event?.startDateTime,
-    attendeeName: `${user?.firstName} ${user?.lastName}`,
+    eventId: eventId,
     orderId: orderID,
   };
 
   const encodedTicketInfo = encodeURIComponent(JSON.stringify(ticketInfo));
   const value = `${window.location.origin}/ticket-info?data=${encodedTicketInfo}`;
 
-  return <QRCode value={value} size={200} />;
+  return (
+    <div className="flex flex-col gap-2">
+      <QRCode value={value} size={200} />
+      <a href={value} target="_blank" rel="noreferrer" className="self-center">
+        <p className="text-primary-500 underline">View Ticket</p>
+      </a>
+    </div>
+  );
 };
 
 export default QRCodeComponent;
