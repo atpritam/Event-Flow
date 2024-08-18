@@ -100,9 +100,14 @@ const EventDetails = async ({ params, searchParams }: SearchParamProps) => {
               <p className="p-medium-16 lg:p-regular-18 text-grey-500">
                 {event.description}
               </p>
-              <p className="p-medium-16 lg:p-regular-18 truncate text-primary-500 underline">
+              <a
+                href={event.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-medium-16 lg:p-regular-18 truncate text-primary-500 underline inline-block w-full"
+              >
                 {event.url}
-              </p>
+              </a>
             </div>
           </div>
         </div>

@@ -5,8 +5,18 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
 
-const NavItems = () => {
+interface NavItemsParams {
+  setOpen?: React.Dispatch<React.SetStateAction<boolean>>;
+}
+const NavItems = ({ setOpen }: NavItemsParams) => {
   const pathname = usePathname();
+
+  const handleClick = () => {
+    if (setOpen) {
+      setOpen(false);
+    }
+  };
+
   return (
     <ul className="md:flex-between flex w-full flex-col items-start gap-5 md:flex-row">
       {headerLinks.map((link, i) => {
@@ -18,7 +28,9 @@ const NavItems = () => {
               isActive && "text-primary-500"
             } flex-center p-medium-16 whitespace-nowrap`}
           >
-            <Link href={link.route}>{link.label}</Link>
+            <Link href={link.route} onClick={handleClick}>
+              {link.label}
+            </Link>
           </li>
         );
       })}

@@ -1,3 +1,5 @@
+"use client";
+import React, { useState } from "react";
 import {
   Sheet,
   SheetContent,
@@ -12,9 +14,11 @@ import NavItems from "./NavItems";
 import Link from "next/link";
 
 const MobileNav = () => {
+  const [open, setOpen] = useState(false);
+
   return (
     <nav className="md:hidden">
-      <Sheet>
+      <Sheet open={open} onOpenChange={setOpen}>
         <SheetTrigger className="align-middle md:hidden">
           <Image
             src="/assets/icons/menu.svg"
@@ -30,12 +34,15 @@ const MobileNav = () => {
             alt="logo"
             width={128}
             height={38}
-          ></Image>
+          />
           <Separator />
-          <NavItems />
-          <button className="md:hidden flex justify-start mt-[-6px]">
-            <Link href="/create-event">
-              <span className=" flex-center p-medium-16 whitespace-nowrap">
+          <NavItems setOpen={setOpen} />
+          <button
+            className="md:hidden flex justify-start mt-[-6px]"
+            onClick={() => setOpen(false)}
+          >
+            <Link href="https://buymeacoffee.com/pritamchk" target="_blank">
+              <span className="flex-center p-medium-16 whitespace-nowrap">
                 Donate
               </span>
             </Link>

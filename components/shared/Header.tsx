@@ -26,7 +26,7 @@ const Header = () => {
 
         <div className="flex w-32 justify-end gap-3">
           <button className="md:flex hidden md:items-center md:justify-center">
-            <Link href="/create-event">
+            <Link href="https://buymeacoffee.com/pritamchk" target="_blank">
               <span className=" flex-center p-medium-16 whitespace-nowrap hover:text-primary-500">
                 Donate
               </span>
