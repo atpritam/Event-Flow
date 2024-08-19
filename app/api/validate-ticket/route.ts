@@ -7,8 +7,6 @@ import User from "@/lib/database/models/user.model";
 export async function POST(req: Request) {
   try {
     const { orderId, eventId } = await req.json();
-    console.log("ReceivedOrderId", orderId);
-    console.log("ReceivedEventId", eventId);
 
     await connectToDatabase();
 
@@ -32,7 +30,7 @@ export async function POST(req: Request) {
         eventId: order.event._id.toString(),
         eventName: order.event.title,
         eventDate: order.event.startDateTime,
-        attendeeName: `${order.buyer.firstName} ${order.buyer.lastName}`, // Assuming order has user info
+        attendeeName: `${order.buyer.firstName} ${order.buyer.lastName}`,
         orderId: order._id.toString(),
       },
     });

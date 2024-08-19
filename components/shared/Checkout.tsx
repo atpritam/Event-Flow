@@ -1,14 +1,13 @@
 "use client";
 
 import { IEvent } from "@/lib/database/models/event.model";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 
 import { loadStripe } from "@stripe/stripe-js";
 import { checkoutOrder } from "@/lib/actions/order.action";
+import Loader from "./Loader";
 
-// Make sure to call `loadStripe` outside of a component’s render to avoid
-// recreating the `Stripe` object on every render.
 loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
 const Checkout = ({
@@ -18,8 +17,8 @@ const Checkout = ({
   event: IEvent;
   userId: string | null;
 }) => {
+  const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
-    // Check to see if this is a redirect back from Checkout
     const query = new URLSearchParams(window.location.search);
     if (query.get("success")) {
       console.log("Order placed! You will receive an email confirmation.");
@@ -42,12 +41,20 @@ const Checkout = ({
 
     await checkoutOrder(order);
   };
+
   return (
-    <form method="post" action={onCheckout}>
-      <Button type="submit" role="link" className="sm:w-fit">
-        {event.isFree ? "Get Tickets" : "Buy Tickets"}
-      </Button>
-    </form>
+    <>
+      {isLoading && <Loader />}
+      <form
+        method="post"
+        action={onCheckout}
+        onClick={() => setIsLoading(true)}
+      >
+        <Button type="submit" role="link" className="sm:w-fit">
+          {event.isFree ? "Get Tickets" : "Buy Tickets"}
+        </Button>
+      </form>
+    </>
   );
 };
 

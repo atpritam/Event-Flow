@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useRef } from "react";
 import { useSearchParams } from "next/navigation";
-import { Download, Calendar, User, Hash } from "lucide-react";
+import { Download, Calendar, User, Hash, Check, X } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -22,15 +22,28 @@ const TicketInfo = () => {
   const [ticketInfo, setTicketInfo] = useState<TicketInfoType | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [valid, setValid] = useState(true);
+  const [buttonIcon, setButtonIcon] = useState<"download" | "check">(
+    "download"
+  );
   const ticketRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    setIsLoading(true);
     const data = searchParams.get("data");
     if (data) {
       validateTicket(data);
     }
   }, [searchParams]);
+
+  useEffect(() => {
+    if (ticketInfo) {
+      const eventDate = new Date(ticketInfo.eventDate);
+      const now = new Date();
+      setValid(now <= eventDate);
+    }
+  }, [ticketInfo]);
 
   const validateTicket = async (data: string) => {
     setIsLoading(true);
@@ -43,6 +56,7 @@ const TicketInfo = () => {
       });
       const result = await response.json();
       if (!response.ok || !result.isValid) {
+        setValid(false);
         throw new Error(result.error || "Failed to validate ticket");
       }
       setTicketInfo(result.ticketInfo);
@@ -56,20 +70,21 @@ const TicketInfo = () => {
 
   const downloadTicketAsImage = async () => {
     if (contentRef.current) {
-      const downloadButton = document.getElementById("download-button");
-      if (downloadButton) downloadButton.style.display = "none";
+      setButtonIcon("check");
 
       const canvas = await html2canvas(contentRef.current, {
         backgroundColor: "#ffffff",
         scale: 2,
       });
 
-      if (downloadButton) downloadButton.style.display = "flex";
-
       const link = document.createElement("a");
       link.href = canvas.toDataURL("image/png");
       link.download = `ticket-${ticketInfo?.eventName}.png`;
       link.click();
+
+      setTimeout(() => {
+        setButtonIcon("download");
+      }, 900);
     }
   };
 
@@ -83,7 +98,7 @@ const TicketInfo = () => {
 
   if (error) {
     return (
-      <Card className="max-w-lg mx-auto mt-8">
+      <Card className="max-w-lg mx-auto mt-8 p-4">
         <CardContent>
           <h2 className="text-xl font-semibold text-red-500 mb-2">
             Validation Error
@@ -96,7 +111,7 @@ const TicketInfo = () => {
 
   if (!ticketInfo) {
     return (
-      <Card className="max-w-lg mx-auto mt-8">
+      <Card className="max-w-lg mx-auto mt-8 p-4">
         <CardContent>
           <p className="text-lg">No valid ticket information found.</p>
         </CardContent>
@@ -122,18 +137,21 @@ const TicketInfo = () => {
             <div className="space-y-6">
               <div>
                 <h2 className="text-2xl font-semibold text-gray-800">
-                  {ticketInfo.eventName}
+                  {ticketInfo?.eventName}
                 </h2>
                 <div className="flex items-center mt-2 text-gray-600">
                   <Calendar className="w-5 h-5 mr-2" />
                   <p>
-                    {new Date(ticketInfo.eventDate).toLocaleString(undefined, {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
+                    {new Date(ticketInfo?.eventDate!).toLocaleString(
+                      undefined,
+                      {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      }
+                    )}
                   </p>
                 </div>
               </div>
@@ -146,7 +164,7 @@ const TicketInfo = () => {
                   <div className="flex items-center mt-1">
                     <User className="w-5 h-5 mr-2 text-gray-400" />
                     <p className="text-lg font-medium">
-                      {ticketInfo.attendeeName}
+                      {ticketInfo?.attendeeName}
                     </p>
                   </div>
                 </div>
@@ -156,10 +174,25 @@ const TicketInfo = () => {
                   </h3>
                   <div className="flex items-center mt-1">
                     <Hash className="w-5 h-5 mr-2 text-gray-400" />
-                    <p className="text-lg font-medium">{ticketInfo.orderId}</p>
+                    <p className="text-lg font-medium">{ticketInfo?.orderId}</p>
                   </div>
                 </div>
               </div>
+            </div>
+            <div className="absolute top-4 right-20 flex flex-col justify-center items-center">
+              {valid ? (
+                <>
+                  <Check className="w-6 h-6 mr-2 text-white" />
+                  <p className="text-sm font-semibold text-white mr-2">Valid</p>
+                </>
+              ) : (
+                <>
+                  <X className="w-6 h-6 mr-2 text-white" />
+                  <p className="text-sm font-semibold text-white mr-2">
+                    Expired
+                  </p>
+                </>
+              )}
             </div>
             <div className="mt-8 text-center">
               <p className="text-sm text-gray-500">
@@ -173,7 +206,11 @@ const TicketInfo = () => {
           onClick={downloadTicketAsImage}
           className="absolute top-4 right-4 bg-white text-blue-600 hover:bg-gray-100"
         >
-          <Download className="w-5 h-5" />
+          {buttonIcon === "download" ? (
+            <Download className="w-5 h-5" />
+          ) : (
+            <Check className="w-5 h-5 text-green-600" />
+          )}
         </Button>
       </Card>
     </div>

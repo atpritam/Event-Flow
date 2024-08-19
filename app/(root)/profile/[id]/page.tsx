@@ -2,12 +2,12 @@ import Collection from "@/components/shared/Collection";
 import { Button } from "@/components/ui/button";
 import { getUserIDByClerkId } from "@/lib/actions/user.actions";
 import { auth } from "@clerk/nextjs/server";
-import Link from "next/link";
 import React from "react";
 import { Plus } from "lucide-react";
 import { getEventsByUser } from "@/lib/actions/event.actions";
 import { redirect } from "next/navigation";
 import { SearchParamProps } from "@/app/types";
+import EventLink from "@/components/shared/EventLink";
 
 const ProfilePage = async ({ params, searchParams }: SearchParamProps) => {
   const userId = params.id;
@@ -36,10 +36,10 @@ const ProfilePage = async ({ params, searchParams }: SearchParamProps) => {
             Events Organized by {organizedEvents?.data[0].organizer.firstName}
           </h3>
           <Button asChild className="button hidden sm:flex">
-            <Link href="/events/create">
+            <EventLink href="/events/create">
               <Plus className="mr-1" />{" "}
               <span className="p-medium-18">Create</span>
-            </Link>
+            </EventLink>
           </Button>
         </div>
       </section>

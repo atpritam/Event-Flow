@@ -8,8 +8,8 @@ import {
 import { formatDateTime } from "@/lib/utils";
 import { auth } from "@clerk/nextjs/server";
 import Image from "next/image";
-import Link from "next/link";
 import React from "react";
+import EventLink from "@/components/shared/EventLink";
 
 const EventDetails = async ({ params, searchParams }: SearchParamProps) => {
   const eventId = params.id;
@@ -24,6 +24,10 @@ const EventDetails = async ({ params, searchParams }: SearchParamProps) => {
     eventId,
     page: searchParams.page as string,
   });
+
+  const now = new Date();
+  const endDate = new Date(event.endDateTime);
+  const ticketsAvailable = now <= endDate;
 
   return (
     <>
@@ -50,20 +54,26 @@ const EventDetails = async ({ params, searchParams }: SearchParamProps) => {
                 </div>
                 <p className="p-medium-18 ml-2 mt-2 sm:mt-0">
                   by{" "}
-                  <Link
-                    className=" text-primary-500"
+                  <EventLink
                     href={
                       isEventCreator
                         ? `/profile`
                         : `/profile/${event.organizer._id}`
                     }
+                    className="text-primary-500"
                   >
                     {event.organizer.firstName} {event.organizer.lastName}
-                  </Link>
+                  </EventLink>
                 </p>
               </div>
             </div>
-            <CheckoutButton event={event} />
+            {ticketsAvailable ? (
+              <CheckoutButton event={event} />
+            ) : (
+              <p className="text-red-500 font-bold">
+                Tickets are no longer available!
+              </p>
+            )}
             <div className="flex flex-col gap-5 ">
               <div className="flex gap-2 md:gap-3">
                 <Image
