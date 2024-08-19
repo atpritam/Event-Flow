@@ -1,5 +1,3 @@
-import React from "react";
-
 const EmptyState = ({ title, subtext }: { title: string; subtext: string }) => {
   return (
     <div className="flex-center wrapper min-h-[200px] w-full flex-col gap-3 rounded-[14px] bg-grey-50 py-28 text-center">

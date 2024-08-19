@@ -7,7 +7,7 @@ import Image from "next/image";
 import DeleteConfirmation from "./DeleteConfirmation";
 import TicketDialog from "./TicketDialog";
 import { useUser } from "@clerk/nextjs";
-import { use, useState } from "react";
+import { useState } from "react";
 import Loader from "./Loader";
 
 const EventCard = ({
@@ -60,8 +60,10 @@ const EventCard = ({
               </span>
               <Link
                 className="p-semibold-14 w-min rounded-full bg-grey-500/10 px-4 py-1 text-grey-600"
-                href={`/?category=${event.category.name}`}
-                scroll={false}
+                href={`/?category=${encodeURIComponent(
+                  event.category.name
+                )}#events`}
+                scroll={true}
               >
                 {event.category.name}
               </Link>

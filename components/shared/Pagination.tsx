@@ -32,14 +32,32 @@ const Pagination = ({
       key: urlParamName,
       value: newPage.toString(),
     });
+
     router.push(newUrl, { scroll: false });
+
+    setTimeout(() => {
+      const eventsSection = document.getElementById("events");
+      if (eventsSection) {
+        eventsSection.scrollIntoView({ behavior: "smooth" });
+      }
+    }, 1);
   };
 
   return (
     <ShadcnPagination className="flex justify-center gap-2 mt-4">
       <PaginationContent>
         <PaginationItem>
-          <PaginationPrevious onClick={() => onPageChange(page - 1)} href="#" />
+          {page > 1 ? (
+            <PaginationPrevious
+              onClick={() => onPageChange(page - 1)}
+              className="cursor-pointer"
+            />
+          ) : (
+            <PaginationPrevious
+              aria-disabled="true"
+              className="cursor-not-allowed opacity-50"
+            />
+          )}
         </PaginationItem>
         <PaginationItem>
           <PaginationLink
@@ -50,23 +68,32 @@ const Pagination = ({
             1
           </PaginationLink>
         </PaginationItem>
-        {page > 2 && (
+        {totalPages > 1 && (
           <PaginationItem>
-            <PaginationLink href="#" onClick={() => onPageChange(page)}>
-              {page}
+            <PaginationLink
+              isActive={page === 2}
+              href="#"
+              onClick={() => onPageChange(2)}
+            >
+              2
             </PaginationLink>
           </PaginationItem>
         )}
-        {page < totalPages && (
+        {page < totalPages ? (
           <PaginationItem>
-            <PaginationLink href="#" onClick={() => onPageChange(totalPages)}>
-              {totalPages}
-            </PaginationLink>
+            <PaginationNext
+              onClick={() => onPageChange(page + 1)}
+              className="cursor-pointer"
+            />
+          </PaginationItem>
+        ) : (
+          <PaginationItem>
+            <PaginationNext
+              aria-disabled="true"
+              className="cursor-not-allowed opacity-50"
+            />
           </PaginationItem>
         )}
-        <PaginationItem>
-          <PaginationNext onClick={() => onPageChange(page + 1)} href="#" />
-        </PaginationItem>
       </PaginationContent>
     </ShadcnPagination>
   );
