@@ -30,6 +30,7 @@ export async function POST(req: Request) {
         eventId: order.event._id.toString(),
         eventName: order.event.title,
         eventDate: order.event.startDateTime,
+        eventEndDateTime: order.event.endDateTime,
         attendeeName: `${order.buyer.firstName} ${order.buyer.lastName}`,
         orderId: order._id.toString(),
       },

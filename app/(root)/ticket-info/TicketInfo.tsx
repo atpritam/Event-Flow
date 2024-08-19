@@ -13,6 +13,7 @@ interface TicketInfoType {
   eventId: string;
   eventName: string;
   eventDate: string;
+  eventEndDateTime: string;
   attendeeName: string;
   orderId: string;
 }
@@ -39,9 +40,9 @@ const TicketInfo = () => {
 
   useEffect(() => {
     if (ticketInfo) {
-      const eventDate = new Date(ticketInfo.eventDate);
+      const eventEndDateTime = new Date(ticketInfo.eventEndDateTime);
       const now = new Date();
-      setValid(now <= eventDate);
+      setValid(now <= eventEndDateTime);
     }
   }, [ticketInfo]);
 

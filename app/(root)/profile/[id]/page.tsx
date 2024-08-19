@@ -8,13 +8,19 @@ import { getEventsByUser } from "@/lib/actions/event.actions";
 import { redirect } from "next/navigation";
 import { SearchParamProps } from "@/app/types";
 import EventLink from "@/components/shared/EventLink";
+import { SignedIn } from "@clerk/nextjs";
 
 const ProfilePage = async ({ params, searchParams }: SearchParamProps) => {
   const userId = params.id;
   const { sessionClaims } = auth();
-  const currentUserClerkId = sessionClaims?.userID as string;
-  const currentUserId = await getUserIDByClerkId(currentUserClerkId);
-  const isUser = currentUserId === userId;
+
+  let isUser = false;
+
+  if (sessionClaims?.userID) {
+    const currentUserClerkId = sessionClaims.userID as string;
+    const currentUserId = await getUserIDByClerkId(currentUserClerkId);
+    isUser = currentUserId === userId;
+  }
 
   if (isUser) {
     redirect("/profile");
@@ -35,12 +41,14 @@ const ProfilePage = async ({ params, searchParams }: SearchParamProps) => {
           <h3 className="h3-bold text-center sm:text-left">
             Events Organized by {organizedEvents?.data[0].organizer.firstName}
           </h3>
-          <Button asChild className="button hidden sm:flex">
-            <EventLink href="/events/create">
-              <Plus className="mr-1" />{" "}
-              <span className="p-medium-18">Create</span>
-            </EventLink>
-          </Button>
+          <SignedIn>
+            <Button asChild className="button hidden sm:flex">
+              <EventLink href="/events/create">
+                <Plus className="mr-1" />{" "}
+                <span className="p-medium-18">Create</span>
+              </EventLink>
+            </Button>
+          </SignedIn>
         </div>
       </section>
       <section className="wrapper my-8">
