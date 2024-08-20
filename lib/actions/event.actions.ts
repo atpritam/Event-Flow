@@ -63,7 +63,6 @@ export const getEventById = async (eventId: string) => {
   }
 };
 
-// GET ALL EVENTS
 export async function getAllEvents({
   query,
   limit = 6,

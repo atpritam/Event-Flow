@@ -62,7 +62,6 @@ const Pagination = ({
         );
       }
     } else {
-      // Always show first page
       pageNumbers.push(
         <PaginationItem key={1}>
           <PaginationLink
@@ -75,7 +74,6 @@ const Pagination = ({
         </PaginationItem>
       );
 
-      // Show ellipsis if current page is more than 3
       if (page > 3) {
         pageNumbers.push(
           <PaginationItem key="ellipsis-start">
@@ -84,7 +82,6 @@ const Pagination = ({
         );
       }
 
-      // Show current page and surrounding pages
       const start = Math.max(2, page - 1);
       const end = Math.min(totalPages - 1, page + 1);
       for (let i = start; i <= end; i++) {
@@ -101,7 +98,6 @@ const Pagination = ({
         );
       }
 
-      // Show ellipsis if current page is less than totalPages - 2
       if (page < totalPages - 2) {
         pageNumbers.push(
           <PaginationItem key="ellipsis-end">
@@ -110,7 +106,6 @@ const Pagination = ({
         );
       }
 
-      // Always show last page
       pageNumbers.push(
         <PaginationItem key={totalPages}>
           <PaginationLink
@@ -133,7 +128,9 @@ const Pagination = ({
         <PaginationItem>
           <PaginationPrevious
             onClick={() => onPageChange(page - 1)}
-            className={page > 1 ? "cursor-pointer" : "cursor-not-allowed opacity-50"}
+            className={
+              page > 1 ? "cursor-pointer" : "cursor-not-allowed opacity-50"
+            }
             aria-disabled={page === 1}
           />
         </PaginationItem>
@@ -141,7 +138,11 @@ const Pagination = ({
         <PaginationItem>
           <PaginationNext
             onClick={() => onPageChange(page + 1)}
-            className={page < totalPages ? "cursor-pointer" : "cursor-not-allowed opacity-50"}
+            className={
+              page < totalPages
+                ? "cursor-pointer"
+                : "cursor-not-allowed opacity-50"
+            }
             aria-disabled={page === totalPages}
           />
         </PaginationItem>

@@ -34,7 +34,7 @@ const ProfilePage = async ({ params, searchParams }: SearchParamProps) => {
   });
 
   return (
-    <>
+    <div className="sm:px-2">
       {/* Events Organized */}
       <section className="bg-primary-50 bg-dotted-pattern bg-cover bg-center py-5 md:py-5">
         <div className="wrapper flex items-center justify-center sm:justify-between">
@@ -63,7 +63,7 @@ const ProfilePage = async ({ params, searchParams }: SearchParamProps) => {
           totalPages={organizedEvents?.totalPages}
         />
       </section>
-    </>
+    </div>
   );
 };
 

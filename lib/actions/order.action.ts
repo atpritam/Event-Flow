@@ -20,7 +20,6 @@ export const checkoutOrder = async (order: CheckoutOrderParams) => {
 
   const price = order.isFree ? 0 : Number(order.price) * 100;
   try {
-    // Create Checkout Sessions from body params.
     const session = await stripe.checkout.sessions.create({
       line_items: [
         {
@@ -64,7 +63,6 @@ export const createOrder = async (order: CreateOrderParams) => {
   }
 };
 
-// GET ORDERS BY EVENT
 export async function getOrdersByEvent({
   searchString,
   eventId,
@@ -126,7 +124,6 @@ export async function getOrdersByEvent({
   }
 }
 
-// GET ORDERS BY USER
 export async function getOrdersByUser({
   userId,
   limit = 3,

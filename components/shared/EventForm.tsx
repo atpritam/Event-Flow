@@ -144,7 +144,7 @@ const EventForm = ({ userId, type, event }: EventFormProps) => {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="flex flex-col gap-5"
+        className="flex flex-col gap-5 px-4"
       >
         <div className="flex flex-col gap-5 md:flex-row">
           <FormField
