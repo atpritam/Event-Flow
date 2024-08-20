@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, use } from "react";
 import { useSearchParams } from "next/navigation";
 import { Download, Calendar, User, Hash, Check, X } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import html2canvas from "html2canvas";
 import Image from "next/image";
+import QRCode from "react-qr-code";
 
 interface TicketInfoType {
   eventId: string;
@@ -27,6 +28,10 @@ const TicketInfo = () => {
   const [buttonIcon, setButtonIcon] = useState<"download" | "check">(
     "download"
   );
+  const [eventId, setEventId] = useState<string | null>(null);
+  const [orderId, setOrderId] = useState<string | null>(null);
+  const [value, setValue] = useState<string>("");
+
   const ticketRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
 
@@ -34,9 +39,23 @@ const TicketInfo = () => {
     setIsLoading(true);
     const data = searchParams.get("data");
     if (data) {
+      const { eventId, orderId } = JSON.parse(data);
+      setEventId(eventId);
+      setOrderId(orderId);
       validateTicket(data);
     }
   }, [searchParams]);
+
+  useEffect(() => {
+    const ticketInfo = {
+      eventId: eventId,
+      orderId: orderId,
+    };
+
+    const encodedTicketInfo = encodeURIComponent(JSON.stringify(ticketInfo));
+    const value = `${window.location.origin}/ticket-info?data=${encodedTicketInfo}`;
+    setValue(value);
+  }, [eventId, orderId]);
 
   useEffect(() => {
     if (ticketInfo) {
@@ -179,6 +198,12 @@ const TicketInfo = () => {
                   </div>
                 </div>
               </div>
+              <Separator />
+              {value && (
+                <div className="text-center mt-4 flex justify-center">
+                  <QRCode value={value} size={128} />
+                </div>
+              )}
             </div>
             <div className="absolute top-4 right-20 flex flex-col justify-center items-center">
               {valid ? (
