@@ -8,9 +8,11 @@ import Link from "next/link";
 import Checkout from "./Checkout";
 
 const CheckoutButton = async ({ event }: { event: IEvent }) => {
-  const hasEventFinished = event?.endDateTime
-    ? new Date(event.endDateTime) < new Date()
-    : false;
+  const hasEventFinished = false;
+
+  // const hasEventFinished = event?.endDateTime
+  // ? new Date(event.endDateTime) < new Date()
+  // : false;
 
   const { sessionClaims } = auth();
   const id = sessionClaims?.userID as string;
