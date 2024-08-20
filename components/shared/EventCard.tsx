@@ -120,9 +120,9 @@ const EventCard = ({
                 />
               </Link>
             )}
-            {!hasOrderLink && hidePrice && (
+            {/* {!hasOrderLink && hidePrice && (
               <TicketDialog event={event} orderedEventIds={orderedEventIds} />
-            )}
+            )} */}
           </div>
         </div>
       </div>
