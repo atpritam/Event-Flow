@@ -13,12 +13,14 @@ import {
 } from "@/components/ui/pagination";
 
 type PaginationProps = {
+  limit?: number;
   page: number;
   totalPages: number;
   urlParamName?: string;
 };
 
 const Pagination = ({
+  limit,
   page,
   totalPages,
   urlParamName = "page",
