@@ -84,12 +84,12 @@ const EventDetails = async ({ params, searchParams }: SearchParamProps) => {
                 />
                 <div>
                   <div className="p-medium-16 lg:p-regular-20 flex flex-wrap items-center">
-                    <p>{formatDateTime(event.startDateTime).dateOnly} - </p>
-                    <p>{formatDateTime(event.endDateTime).dateOnly}</p>
+                    <p>Hello - </p>
+                    <p>Hello</p>
                   </div>
                   <div className="p-medium-16 lg:p-regular-20 flex flex-wrap items-center">
-                    <p>{formatDateTime(event.startDateTime).timeOnly} - </p>
-                    <p>{formatDateTime(event.endDateTime).timeOnly}</p>
+                    <p>Hello - </p>
+                    <p>hello</p>
                   </div>
                 </div>
               </div>

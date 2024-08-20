@@ -53,9 +53,7 @@ const Orders = async ({ searchParams }: SearchParamProps) => {
                         {row.eventTitle}
                       </td>
                       <td className="min-w-[150px] py-4">{row.buyer}</td>
-                      <td className="min-w-[100px] py-4">
-                        {formatDateTime(row.createdAt).dateTime}
-                      </td>
+                      <td className="min-w-[100px] py-4">Hello</td>
                       <td className="min-w-[100px] py-4 text-right">
                         {formatPrice(row.totalAmount)}
                       </td>
@@ -79,8 +77,7 @@ const Orders = async ({ searchParams }: SearchParamProps) => {
                     <span className="font-medium">Buyer:</span> {row.buyer}
                   </p>
                   <p className="mb-1">
-                    <span className="font-medium">Date:</span>{" "}
-                    {formatDateTime(row.createdAt).dateTime}
+                    <span className="font-medium">Date:</span> Hello
                   </p>
                   <p className="text-right">
                     <span className="font-medium">Amount:</span>{" "}
