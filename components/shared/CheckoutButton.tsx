@@ -8,10 +8,6 @@ import Link from "next/link";
 import Checkout from "./Checkout";
 
 const CheckoutButton = async ({ event }: { event: IEvent }) => {
-  const hasEventFinished = event?.endDateTime
-    ? new Date(event.endDateTime) < new Date()
-    : false;
-
   const { sessionClaims } = auth();
   const id = sessionClaims?.userID as string;
   let userId = null;
@@ -21,22 +17,14 @@ const CheckoutButton = async ({ event }: { event: IEvent }) => {
 
   return (
     <div className="flex items-center gap-3">
-      {hasEventFinished ? (
-        <p className="p-medium-16 text-red-400 p-2 ">
-          Sorry, this event has already finished.
-        </p>
-      ) : (
-        <>
-          <SignedOut>
-            <Button asChild>
-              <Link href="/sign-in">Get Tickets</Link>
-            </Button>
-          </SignedOut>
-          <SignedIn>
-            <Checkout event={event} userId={userId} />
-          </SignedIn>
-        </>
-      )}
+      <SignedOut>
+        <Button asChild>
+          <Link href="/sign-in">Get Tickets</Link>
+        </Button>
+      </SignedOut>
+      <SignedIn>
+        <Checkout event={event} userId={userId} />
+      </SignedIn>
     </div>
   );
 };

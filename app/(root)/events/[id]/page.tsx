@@ -2,6 +2,7 @@ import { SearchParamProps } from "@/app/types";
 import CheckoutButton from "@/components/shared/CheckoutButton";
 import Collection from "@/components/shared/Collection";
 import {
+  checkValidity,
   getEventById,
   getRelatedEventsByCategory,
 } from "@/lib/actions/event.actions";
@@ -25,9 +26,8 @@ const EventDetails = async ({ params, searchParams }: SearchParamProps) => {
     page: searchParams.page as string,
   });
 
-  const now = new Date();
-  const endDate = new Date(event.endDateTime);
-  const ticketsAvailable = now <= endDate;
+  const isAvailable = await checkValidity(eventId);
+  const ticketsAvailable = isAvailable?.ticketsAvailable;
 
   return (
     <>
@@ -71,7 +71,7 @@ const EventDetails = async ({ params, searchParams }: SearchParamProps) => {
               <CheckoutButton event={event} />
             ) : (
               <p className="text-red-500 font-bold">
-                Tickets are no longer available!
+                Sorry, this event has already finished.
               </p>
             )}
             <div className="flex flex-col gap-5 ">

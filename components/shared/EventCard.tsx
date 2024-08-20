@@ -9,6 +9,7 @@ import TicketDialog from "./TicketDialog";
 import { useUser } from "@clerk/nextjs";
 import { useState } from "react";
 import Loader from "./Loader";
+import { usePathname } from "next/navigation";
 
 const EventCard = ({
   event,
@@ -21,9 +22,15 @@ const EventCard = ({
   hidePrice?: boolean;
   orderedEventIds?: { orderId: string; eventId: string }[];
 }) => {
+  const pathname = usePathname();
+  const isProfilePage = pathname.includes("/profile");
   const { user } = useUser();
   const isEventCreator = user?.publicMetadata.userId === event.organizer._id;
   const [loading, setLoading] = useState(false);
+  const organizerName = `${event.organizer.firstName} ${event.organizer.lastName}`;
+  const organizerProfileUrl = isEventCreator
+    ? `/profile`
+    : `/profile/${event.organizer._id}`;
 
   return (
     <>
@@ -83,15 +90,20 @@ const EventCard = ({
             </p>
           </Link>
           <div className="flex-between w-full">
-            <Link
-              className="p-medium-16 md:p-medium-16 text-grey-500 hover:text-primary-500"
-              href={
-                isEventCreator ? `/profile` : `/profile/${event.organizer._id}`
-              }
-              onClick={() => setLoading(true)}
-            >
-              {event.organizer.firstName} {event.organizer.lastName}
-            </Link>
+            {!isProfilePage ? (
+              <Link
+                className="p-medium-16 md:p-medium-16 text-grey-500 hover:text-primary-500"
+                href={organizerProfileUrl}
+                onClick={() => setLoading(true)}
+              >
+                {organizerName}
+              </Link>
+            ) : (
+              <span className="p-medium-16 md:p-medium-16 text-grey-500 cursor-pointer">
+                {organizerName}
+              </span>
+            )}
+
             {hasOrderLink && isEventCreator && (
               <Link
                 href={`/orders?eventId=${event._id}`}

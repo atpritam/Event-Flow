@@ -198,3 +198,21 @@ export async function getEventsByUser({
     handleError(error);
   }
 }
+
+export async function checkValidity(eventId: string) {
+  try {
+    const event = await Event.findById(eventId);
+
+    if (!event) {
+      throw new Error("Event not found");
+    }
+
+    const now = new Date();
+    const endDate = new Date(event.endDateTime);
+    const ticketsAvailable = now <= endDate;
+
+    return { ticketsAvailable };
+  } catch (error) {
+    handleError(error);
+  }
+}
