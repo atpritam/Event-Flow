@@ -26,12 +26,12 @@ const Collection = ({
                 const hidePrice = collectionType === "My_Tickets";
                 return (
                   <li key={event._id} className="flex justify-center">
-                    {/* <EventCard
+                    <EventCard
                       event={event}
                       hasOrderLink={hasOrderLink}
                       hidePrice={hidePrice}
                       orderedEventIds={orderedEventIds}
-                    /> */}
+                    />
                   </li>
                 );
               })}
