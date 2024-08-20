@@ -5,7 +5,6 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue?style=flat&logo=typescript&logoColor=blue&logoSize=auto&labelColor=whitesmoke)](https://www.typescriptlang.org/)
 [![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3.4.x-blue?style=flat&logo=tailwindcss&logoColor=blue&logoSize=auto&labelColor=black)](https://tailwindcss.com/)
 [![MongoDB](https://img.shields.io/badge/MongoDB-8.0-%23589636?style=flat&logo=mongodb&logoColor=%23589636&logoSize=amg&labelColor=whitesmoke)](https://www.mongodb.com/lp/cloud/atlas/try4?utm_content=controlhterms&utm_source=google&utm_campaign=search_gs_pl_evergreen_atlas_core_prosp-brand_gic-null_emea-pl_ps-all_desktop_eng_lead&utm_term=mongodb&utm_medium=cpc_paid_search&utm_ad=e&utm_ad_campaign_id=12212624548&adgroup=115749720623&cq_cmp=12212624548&gad_source=1&gclid=Cj0KCQjw5ea1BhC6ARIsAEOG5pxTAlQ4bkZdAZuggDCcisw-xncyF4Lij1j2P8vsXqWClLK9sFuTyoUaAr0REALw_wcB)
-[![Mongoose](https://img.shields.io/badge/Mongoose-7.x-red?style=flat&logo=mongoose&logoColor=white&labelColor=red)](https://mongoosejs.com/)
 [![Clerk](https://img.shields.io/badge/Clerk-4.x-purple?style=flat&logo=clerk&logoColor=white&labelColor=purple)](https://clerk.dev/)
 [![Stripe](https://img.shields.io/badge/Stripe-10.x-blueviolet?style=flat&logo=stripe&logoColor=white&labelColor=blueviolet)](https://stripe.com/)
 
