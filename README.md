@@ -8,6 +8,8 @@
 [![Clerk](https://img.shields.io/badge/Clerk-purple?style=flat&logo=clerk&logoColor=white&labelColor=purple)](https://clerk.dev/)
 [![Stripe](https://img.shields.io/badge/Stripe-blueviolet?style=flat&logo=stripe&logoColor=white&labelColor=blueviolet)](https://stripe.com/)
 
+_Deployed Version: [EVENT-FLOW](https://event-flow-alpha.vercel.app)_
+
 ## Overview
 
 This Events application is built using Next.js. The app features a full-fledged event management system where users can create, view, manage and purchase tickets for events. The platform acts as a dynamic marketplace for events where users can discover and engage with events that interest them. Additionally, it integrates payment processing with Stripe and ticket validation with QR codes.
