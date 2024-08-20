@@ -84,11 +84,11 @@ const EventCard = ({
               ? formatDateTime(event.startDateTime).dateTime
               : null}
           </p>
-          <Link href={`/events/${event._id}`} onClick={() => setLoading(true)}>
+          {/* <Link href={`/events/${event._id}`} onClick={() => setLoading(true)}>
             <p className="p-medium-16 lg:p-medium-20 line-clamp-2 flex-1 text-black">
               {event.title}
             </p>
-          </Link>
+          </Link> */}
           <div className="flex-between w-full">
             {!isProfilePage ? (
               <Link
