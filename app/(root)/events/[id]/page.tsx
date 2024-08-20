@@ -52,8 +52,8 @@ const EventDetails = async ({ params, searchParams }: SearchParamProps) => {
                     {event.category.name}
                   </p>
                 </div>
-                <p className="p-medium-18 ml-2 mt-2 sm:mt-0">
-                  by{" "}
+                <div className="p-medium-18 ml-2 mt-2 sm:mt-0 flex flex-row">
+                  by &nbsp;
                   <EventLink
                     href={
                       isEventCreator
@@ -64,7 +64,7 @@ const EventDetails = async ({ params, searchParams }: SearchParamProps) => {
                   >
                     {event.organizer.firstName} {event.organizer.lastName}
                   </EventLink>
-                </p>
+                </div>
               </div>
             </div>
             {ticketsAvailable ? (

@@ -10,7 +10,6 @@ const QRCodeComponent = ({
   event: IEvent;
   orderedEventIds?: { orderId: string; eventId: string }[];
 }) => {
-  const { user } = useUser();
   const eventId = event?._id || null;
   const orderID = orderedEventIds?.find(
     (order) => order.eventId === eventId
@@ -25,12 +24,14 @@ const QRCodeComponent = ({
   const value = `${window.location.origin}/ticket-info?data=${encodedTicketInfo}`;
 
   return (
-    <div className="flex flex-col gap-2">
+    <span className="flex flex-col gap-4">
       <QRCode value={value} size={200} />
       <a href={value} target="_blank" rel="noreferrer" className="self-center">
-        <p className="text-primary-500 underline">View Ticket</p>
+        <span className="text-primary-500 py-2 px-2.5 p-medium-18 rounded-md">
+          View Ticket
+        </span>
       </a>
-    </div>
+    </span>
   );
 };
 

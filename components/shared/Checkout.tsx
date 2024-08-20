@@ -45,11 +45,7 @@ const Checkout = ({
   return (
     <>
       {isLoading && <Loader />}
-      <form
-        method="post"
-        action={onCheckout}
-        onClick={() => setIsLoading(true)}
-      >
+      <form action={onCheckout} onClick={() => setIsLoading(true)}>
         <Button type="submit" role="link" className="sm:w-fit">
           {event.isFree ? "Get Tickets" : "Buy Tickets"}
         </Button>

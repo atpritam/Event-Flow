@@ -26,13 +26,12 @@ const EventLink = ({
 
   return (
     <>
-      {isLoading ? (
-        <Loader />
-      ) : (
+      <div>
+        {isLoading && <Loader />}
         <Link href={href} onClick={handleClick} className={className}>
           {children}
         </Link>
-      )}
+      </div>
     </>
   );
 };

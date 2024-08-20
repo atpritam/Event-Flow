@@ -1,6 +1,12 @@
 "use client";
+
 import { useState } from "react";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+  SheetTitle,
+} from "@/components/ui/sheet";
 import { Separator } from "@/components/ui/separator";
 import Image from "next/image";
 import NavItems from "./NavItems";
@@ -23,6 +29,7 @@ const MobileNav = () => {
             />
           </SheetTrigger>
           <SheetContent className="flex flex-col gap-6 bg-white md:hidden">
+            <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
             <Image
               src="/assets/images/logo.svg"
               alt="logo"

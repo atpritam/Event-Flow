@@ -58,15 +58,18 @@ const EventCard = ({
               <span className="p-semibold-14 w-min rounded-full bg-green-100 px-4 py-1 text-green-900">
                 {event.isFree ? "Free" : `$${event.price}`}
               </span>
-              <Link
+              {/* <Link
                 className="p-semibold-14 w-min rounded-full bg-grey-500/10 px-4 py-1 text-grey-600"
                 href={`/?category=${encodeURIComponent(
                   event.category.name
                 )}#events`}
                 scroll={true}
-              >
+              > */}
+              <span className="p-semibold-14 w-min rounded-full bg-grey-500/10 px-4 py-1 text-grey-600">
                 {event.category.name}
-              </Link>
+              </span>
+
+              {/* </Link> */}
             </div>
           )}
           <p className="p-medium-16 text-grey-600">
