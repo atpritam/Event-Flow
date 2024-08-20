@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback } from "react";
-import axios, { AxiosError } from "axios";
+import { useState, useEffect, useCallback, useRef } from "react";
+import axios from "axios";
 import { Input } from "@/components/ui/input";
 
 interface LocationInputProps {
@@ -11,25 +11,19 @@ const LocationInput = ({ value, onChange }: LocationInputProps) => {
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const [rateLimitReached, setRateLimitReached] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const debounce = (func: (...args: any[]) => void, delay: number) => {
-    let timer: NodeJS.Timeout;
-    return (...args: any[]) => {
-      if (timer) clearTimeout(timer);
-      timer = setTimeout(() => {
-        func(...args);
-      }, delay);
-    };
-  };
+  const API_KEY = process.env.NEXT_PUBLIC_LOCATION_API;
 
-  const fetchSuggestions = useCallback(
-    async (input: string) => {
+  const debouncedFetchSuggestions = useRef(
+    debounce(async (input: string) => {
       if (
-        rateLimitReached ||
         input.length < 3 ||
-        input.toLowerCase().includes("onl")
+        input.toLowerCase().includes("onl") ||
+        !validateInput(input)
       ) {
         setSuggestions([]);
+        setErrorMessage(null);
         return;
       }
 
@@ -42,7 +36,7 @@ const LocationInput = ({ value, onChange }: LocationInputProps) => {
           language: "en",
         },
         headers: {
-          "x-rapidapi-key": process.env.LOCATION_API || "",
+          "x-rapidapi-key": API_KEY,
           "x-rapidapi-host": "google-map-places.p.rapidapi.com",
         },
       };
@@ -53,32 +47,41 @@ const LocationInput = ({ value, onChange }: LocationInputProps) => {
           (pred: any) => pred.description
         );
         setSuggestions(predictions);
+        setErrorMessage(null);
       } catch (error: unknown) {
         if (axios.isAxiosError(error)) {
           if (error.response && error.response.status === 429) {
             setRateLimitReached(true);
+            setErrorMessage(
+              "Rate limit reached. Suggestions are temporarily unavailable."
+            );
+          } else {
+            setErrorMessage(
+              "Failed to fetch location suggestions. Please try again."
+            );
           }
         } else {
-          console.error("Error fetching location suggestions:", error);
+          setErrorMessage("An unexpected error occurred.");
         }
         setSuggestions([]);
       }
-    },
-    [rateLimitReached]
-  );
-
-  const debouncedFetchSuggestions = useCallback(
-    debounce(fetchSuggestions, 300),
-    [fetchSuggestions]
-  );
+    }, 300)
+  ).current;
 
   useEffect(() => {
-    debouncedFetchSuggestions(value);
-  }, [value, debouncedFetchSuggestions]);
+    if (!rateLimitReached) {
+      debouncedFetchSuggestions(value);
+    }
+  }, [value, rateLimitReached, debouncedFetchSuggestions]);
 
   const handleSelect = (suggestion: string) => {
     onChange(suggestion);
     setShowDropdown(false);
+  };
+
+  const validateInput = (input: string) => {
+    const specialCharPattern = /[^a-zA-Z0-9, ]/;
+    return !specialCharPattern.test(input) && input.length <= 100;
   };
 
   return (
@@ -87,12 +90,14 @@ const LocationInput = ({ value, onChange }: LocationInputProps) => {
         placeholder="Event Location / Online"
         value={value}
         onChange={(e) => {
-          onChange(e.target.value);
+          const newValue = e.target.value;
+          onChange(newValue);
           setShowDropdown(true);
         }}
         className="input-field"
       />
-      {showDropdown && suggestions.length > 0 && (
+      {errorMessage && <div className="text-red-500 mt-2">{errorMessage}</div>}
+      {showDropdown && suggestions.length > 0 && !rateLimitReached && (
         <div className="absolute z-10 w-full bg-white border rounded shadow">
           {suggestions.map((suggestion, index) => (
             <div
@@ -107,6 +112,16 @@ const LocationInput = ({ value, onChange }: LocationInputProps) => {
       )}
     </div>
   );
+};
+
+const debounce = (func: (...args: any[]) => void, delay: number) => {
+  let timer: NodeJS.Timeout;
+  return (...args: any[]) => {
+    if (timer) clearTimeout(timer);
+    timer = setTimeout(() => {
+      func(...args);
+    }, delay);
+  };
 };
 
 export default LocationInput;

@@ -10,7 +10,6 @@ import { useUser } from "@clerk/nextjs";
 import { useState } from "react";
 import Loader from "./Loader";
 import { usePathname } from "next/navigation";
-import { Client } from "@clerk/nextjs/server";
 import ClientRender from "./ClientRender";
 
 const EventCard = ({
