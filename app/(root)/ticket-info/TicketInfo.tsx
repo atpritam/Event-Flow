@@ -61,6 +61,7 @@ const TicketInfo = () => {
     const ticketInfo = {
       eventId: eventId,
       orderId: orderId,
+      organizerId: organizerId,
     };
 
     const encodedTicketInfo = encodeURIComponent(JSON.stringify(ticketInfo));
