@@ -37,7 +37,7 @@ This Events application is built using Next.js. The app features a full-fledged 
 
 - Users can purchase tickets for events via Stripe.
 - Event organizers can validate tickets via a QR code system.
-- Downloadable tickets in image format for easy sharing.
+- Downloadable tickets in image format for easy sharing and validation.
 
 ### Event Discovery:
 

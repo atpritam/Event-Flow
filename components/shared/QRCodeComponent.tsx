@@ -14,10 +14,12 @@ const QRCodeComponent = ({
   const orderID = orderedEventIds?.find(
     (order) => order.eventId === eventId
   )?.orderId;
+  const organizerId = event?.organizer?._id;
 
   const ticketInfo = {
     eventId: eventId,
     orderId: orderID,
+    organizerId: organizerId,
   };
 
   const encodedTicketInfo = encodeURIComponent(JSON.stringify(ticketInfo));

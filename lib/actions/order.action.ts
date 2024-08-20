@@ -162,3 +162,23 @@ export async function getOrdersByUser({
     handleError(error);
   }
 }
+
+export const markOrderAsUsed = async (orderId: string) => {
+  try {
+    await connectToDatabase();
+
+    if (!orderId) throw new Error("Order ID is required");
+
+    const updatedOrder = await Order.findByIdAndUpdate(
+      orderId,
+      { used: true },
+      { new: true }
+    );
+
+    if (!updatedOrder) throw new Error("Order not found");
+
+    return JSON.parse(JSON.stringify(updatedOrder));
+  } catch (error) {
+    handleError(error);
+  }
+};

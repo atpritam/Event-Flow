@@ -6,7 +6,7 @@ import User from "@/lib/database/models/user.model";
 
 export async function POST(req: Request) {
   try {
-    const { orderId, eventId } = await req.json();
+    const { orderId, eventId, organizerId } = await req.json();
 
     await connectToDatabase();
 
@@ -20,7 +20,11 @@ export async function POST(req: Request) {
         model: User,
       });
 
-    if (!order || order.event._id.toString() !== eventId.toString()) {
+    if (
+      !order ||
+      order.event._id.toString() !== eventId.toString() ||
+      order.event.organizer._id.toString() !== organizerId.toString()
+    ) {
       return NextResponse.json({ isValid: false }, { status: 400 });
     }
 

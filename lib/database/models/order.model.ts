@@ -13,6 +13,7 @@ export interface IOrder extends Document {
     firstName: string;
     lastName: string;
   };
+  used?: boolean;
 }
 
 export type IOrderItem = {
@@ -22,6 +23,7 @@ export type IOrderItem = {
   eventTitle: string;
   eventId: string;
   buyer: string;
+  used?: boolean;
 };
 
 const OrderSchema = new Schema({
@@ -44,6 +46,10 @@ const OrderSchema = new Schema({
   buyer: {
     type: Schema.Types.ObjectId,
     ref: "User",
+  },
+  used: {
+    type: Boolean,
+    default: false,
   },
 });
 
