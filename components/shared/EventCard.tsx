@@ -10,6 +10,8 @@ import { useUser } from "@clerk/nextjs";
 import { useState } from "react";
 import Loader from "./Loader";
 import { usePathname } from "next/navigation";
+import { Client } from "@clerk/nextjs/server";
+import ClientRender from "./ClientRender";
 
 const EventCard = ({
   event,
@@ -79,11 +81,15 @@ const EventCard = ({
               {/* </Link> */}
             </div>
           )}
-          {/* <p className="p-medium-16 text-grey-600">
-            {event.startDateTime
-              ? formatDateTime(event.startDateTime).dateTime
-              : null}
-          </p> */}
+          <ClientRender>
+            {" "}
+            <p className="p-medium-16 text-grey-600">
+              {event.startDateTime
+                ? formatDateTime(event.startDateTime).dateTime
+                : null}
+            </p>
+          </ClientRender>
+
           <Link href={`/events/${event._id}`} onClick={() => setLoading(true)}>
             <p className="p-medium-16 lg:p-medium-20 line-clamp-2 flex-1 text-black">
               {event.title}
