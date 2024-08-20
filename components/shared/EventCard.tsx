@@ -42,7 +42,7 @@ const EventCard = ({
           className="flex flex-center bg-grey-50 flex-grow bg-cover bg-center text-grey-500"
           onClick={() => setLoading(true)}
         />
-        {/* {isEventCreator && !hidePrice && (
+        {isEventCreator && !hidePrice && (
           <div className="absolute right-2 top-2 flex flex-col gap-4 rounded-xl bg-white p-[10px] shadow-sm transition-all">
             <Link
               href={`/events/${event._id}/update`}
@@ -58,7 +58,7 @@ const EventCard = ({
             </Link>
             <DeleteConfirmation eventId={event._id} />
           </div>
-        )} */}
+        )}
         <div className="flex min-h-[230px] flex-col gap-3 p-5 md:gap-4">
           {!hidePrice && (
             <div className="flex gap-2">
@@ -79,11 +79,11 @@ const EventCard = ({
               {/* </Link> */}
             </div>
           )}
-          <p className="p-medium-16 text-grey-600">
+          {/* <p className="p-medium-16 text-grey-600">
             {event.startDateTime
               ? formatDateTime(event.startDateTime).dateTime
               : null}
-          </p>
+          </p> */}
           <Link href={`/events/${event._id}`} onClick={() => setLoading(true)}>
             <p className="p-medium-16 lg:p-medium-20 line-clamp-2 flex-1 text-black">
               {event.title}
