@@ -9,16 +9,18 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
+  PaginationEllipsis,
 } from "@/components/ui/pagination";
 
 type PaginationProps = {
-  limit: number;
+  limit?: number;
   page: number;
   totalPages: number;
   urlParamName?: string;
 };
 
 const Pagination = ({
+  limit,
   page,
   totalPages,
   urlParamName = "page",
@@ -32,9 +34,7 @@ const Pagination = ({
       key: urlParamName,
       value: newPage.toString(),
     });
-
     router.push(newUrl, { scroll: false });
-
     setTimeout(() => {
       const eventsSection = document.getElementById("events");
       if (eventsSection) {
@@ -43,23 +43,28 @@ const Pagination = ({
     }, 1);
   };
 
-  return (
-    <ShadcnPagination className="flex justify-center gap-2 mt-4">
-      <PaginationContent>
-        <PaginationItem>
-          {page > 1 ? (
-            <PaginationPrevious
-              onClick={() => onPageChange(page - 1)}
-              className="cursor-pointer"
-            />
-          ) : (
-            <PaginationPrevious
-              aria-disabled="true"
-              className="cursor-not-allowed opacity-50"
-            />
-          )}
-        </PaginationItem>
-        <PaginationItem>
+  const renderPageNumbers = () => {
+    const pageNumbers = [];
+    const maxVisiblePages = 5;
+
+    if (totalPages <= maxVisiblePages) {
+      for (let i = 1; i <= totalPages; i++) {
+        pageNumbers.push(
+          <PaginationItem key={i}>
+            <PaginationLink
+              isActive={page === i}
+              href="#"
+              onClick={() => onPageChange(i)}
+            >
+              {i}
+            </PaginationLink>
+          </PaginationItem>
+        );
+      }
+    } else {
+      // Always show first page
+      pageNumbers.push(
+        <PaginationItem key={1}>
           <PaginationLink
             isActive={page === 1}
             href="#"
@@ -68,32 +73,78 @@ const Pagination = ({
             1
           </PaginationLink>
         </PaginationItem>
-        {totalPages > 1 && (
-          <PaginationItem>
+      );
+
+      // Show ellipsis if current page is more than 3
+      if (page > 3) {
+        pageNumbers.push(
+          <PaginationItem key="ellipsis-start">
+            <PaginationEllipsis />
+          </PaginationItem>
+        );
+      }
+
+      // Show current page and surrounding pages
+      const start = Math.max(2, page - 1);
+      const end = Math.min(totalPages - 1, page + 1);
+      for (let i = start; i <= end; i++) {
+        pageNumbers.push(
+          <PaginationItem key={i}>
             <PaginationLink
-              isActive={page === 2}
+              isActive={page === i}
               href="#"
-              onClick={() => onPageChange(2)}
+              onClick={() => onPageChange(i)}
             >
-              2
+              {i}
             </PaginationLink>
           </PaginationItem>
-        )}
-        {page < totalPages ? (
-          <PaginationItem>
-            <PaginationNext
-              onClick={() => onPageChange(page + 1)}
-              className="cursor-pointer"
-            />
+        );
+      }
+
+      // Show ellipsis if current page is less than totalPages - 2
+      if (page < totalPages - 2) {
+        pageNumbers.push(
+          <PaginationItem key="ellipsis-end">
+            <PaginationEllipsis />
           </PaginationItem>
-        ) : (
-          <PaginationItem>
-            <PaginationNext
-              aria-disabled="true"
-              className="cursor-not-allowed opacity-50"
-            />
-          </PaginationItem>
-        )}
+        );
+      }
+
+      // Always show last page
+      pageNumbers.push(
+        <PaginationItem key={totalPages}>
+          <PaginationLink
+            isActive={page === totalPages}
+            href="#"
+            onClick={() => onPageChange(totalPages)}
+          >
+            {totalPages}
+          </PaginationLink>
+        </PaginationItem>
+      );
+    }
+
+    return pageNumbers;
+  };
+
+  return (
+    <ShadcnPagination className="flex justify-center gap-2 mt-4">
+      <PaginationContent>
+        <PaginationItem>
+          <PaginationPrevious
+            onClick={() => onPageChange(page - 1)}
+            className={page > 1 ? "cursor-pointer" : "cursor-not-allowed opacity-50"}
+            aria-disabled={page === 1}
+          />
+        </PaginationItem>
+        {renderPageNumbers()}
+        <PaginationItem>
+          <PaginationNext
+            onClick={() => onPageChange(page + 1)}
+            className={page < totalPages ? "cursor-pointer" : "cursor-not-allowed opacity-50"}
+            aria-disabled={page === totalPages}
+          />
+        </PaginationItem>
       </PaginationContent>
     </ShadcnPagination>
   );
