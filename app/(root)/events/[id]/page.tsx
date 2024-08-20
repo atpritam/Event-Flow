@@ -25,10 +25,9 @@ const EventDetails = async ({ params, searchParams }: SearchParamProps) => {
     page: searchParams.page as string,
   });
 
-  // const now = new Date();
-  // const endDate = new Date(event.endDateTime);
-  // const ticketsAvailable = now <= endDate;
-  const ticketsAvailable = true;
+  const now = new Date();
+  const endDate = new Date(event.endDateTime);
+  const ticketsAvailable = now <= endDate;
 
   return (
     <>

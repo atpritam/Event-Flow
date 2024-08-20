@@ -1,4 +1,3 @@
-"use client";
 import TicketInfo from "./TicketInfo";
 
 export default function TicketInfoPage() {

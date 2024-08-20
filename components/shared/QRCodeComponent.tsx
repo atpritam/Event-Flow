@@ -1,6 +1,7 @@
 import React from "react";
 import QRCode from "react-qr-code";
 import { IEvent } from "@/lib/database/models/event.model";
+import { useUser } from "@clerk/nextjs";
 
 const QRCodeComponent = ({
   event,
