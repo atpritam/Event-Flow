@@ -288,13 +288,13 @@ const TicketInfo = () => {
                       <>
                         {usedBefore && !isUsed && (
                           <div className="text-red-600 font-semibold">
-                            <Check className="w-6 h-6 inline-block mr-2" />
+                            <X className="w-6 h-6 inline-block mr-2" />
                             <span>Used Before</span>
                           </div>
                         )}
                         {isUsed && !usedBefore && (
                           <div className="text-yellow-600 font-semibold">
-                            <X className="w-6 h-6 inline-block mr-2" />
+                            <Check className="w-6 h-6 inline-block mr-2" />
                             <span>Marked Used</span>
                           </div>
                         )}
