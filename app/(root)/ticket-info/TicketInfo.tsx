@@ -60,9 +60,9 @@ const TicketInfo = () => {
   const [organizerId, setOrganizerId] = useState<string | null>(null);
   const [value, setValue] = useState<string>("");
   const [loadingFeedback, setLoadingFeedback] = useState<string | null>(null);
-  const [isUsed, setIsUsed] = useState(false);
-  const [autoMark, setAutoMark] = useState<boolean>(false);
   const [usedBefore, setUsedBefore] = useState<boolean>(false);
+  const [markedUsed, setMarkedUsed] = useState<boolean>(false);
+  const [autoMark, setAutoMark] = useState<boolean>(false);
 
   const ticketRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -108,15 +108,15 @@ const TicketInfo = () => {
       const eventEndDateTime = new Date(ticketInfo.eventEndDateTime);
       const now = new Date();
       setValid(now <= eventEndDateTime);
-      setIsUsed(ticketInfo.used);
+      setUsedBefore(ticketInfo.used);
     }
   }, [ticketInfo]);
 
   useEffect(() => {
-    if (autoMark && !isUsed && ticketInfo) {
+    if (autoMark && !markedUsed && ticketInfo && !usedBefore) {
       handleMarkAsUsed();
     }
-  }, [autoMark, isUsed, ticketInfo]);
+  }, [autoMark, markedUsed, usedBefore, ticketInfo]);
 
   const validateTicket = async (data: string) => {
     setIsLoading(true);
@@ -178,13 +178,13 @@ const TicketInfo = () => {
 
       if (order.used) {
         setUsedBefore(true);
-        setIsUsed(false);
+        setMarkedUsed(false);
         return;
       }
 
       const updatedOrder = await markOrderAsUsed(orderId);
       if (updatedOrder?.used) {
-        setIsUsed(true);
+        setMarkedUsed(true);
         setUsedBefore(false);
       } else {
         throw new Error("Failed to mark ticket as used.");
@@ -237,7 +237,7 @@ const TicketInfo = () => {
     <div>
       {isUser ? (
         <>
-          {!isUsed && !usedBefore && (
+          {!markedUsed && !usedBefore && (
             <div className="sm:hidden flex justify-center">
               <Button
                 id="mark-used-button"
@@ -294,13 +294,13 @@ const TicketInfo = () => {
                             <span>Used Before</span>
                           </div>
                         )}
-                        {!usedBefore && isUsed && (
+                        {!usedBefore && markedUsed && (
                           <div className="text-yellow-600 font-semibold">
                             <Check className="w-6 h-6 inline-block mr-2" />
                             <span>Marked Used</span>
                           </div>
                         )}
-                        {!isUsed && !usedBefore && (
+                        {!markedUsed && !usedBefore && (
                           <div className="text-green-600 font-semibold">
                             <Check className="w-6 h-6 inline-block mr-2" />
                             <span>Valid Ticket</span>
@@ -322,7 +322,7 @@ const TicketInfo = () => {
                   )}
                 </div>
               </CardContent>
-              {isUser && !isUsed && (
+              {isUser && !markedUsed && (
                 <div className="absolute sm:top-4 sm:right-4 hidden sm:block">
                   <Button
                     id="mark-used-button"
@@ -413,7 +413,7 @@ const TicketInfo = () => {
                 </div>
                 <div className="absolute top-4 right-20 flex flex-col justify-center items-center">
                   {valid ? (
-                    isUsed || usedBefore ? (
+                    markedUsed || usedBefore ? (
                       <div className="text-white font-semibold flex flex-col justify-center items-center">
                         <X className="w-6 h-6 inline-block" />
                         <span>Used</span>
