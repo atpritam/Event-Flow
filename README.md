@@ -178,7 +178,8 @@ For event organizers, ticket validation is a seamless process integrated into th
    - **Automatic Verification**: Each time a ticket's QR code is scanned, the system performs a robust server-side validation.
    - **Validation Criteria**:
      - **Order ID**: Confirms the ticket belongs to a valid order.
-     - **Event ID**: Ensures the ticket is associated with the correct event. -**Organizer ID**: Grants access to event hosts to validate tickets and mark them as used.
+     - **Event ID**: Ensures the ticket is associated with the correct event.
+     - **Organizer ID**: Grants access to event hosts to validate tickets and mark them as used.
      - **Event End Date**: Checks that the event has not expired.
      - **Usage Status**: Verifies whether the ticket has already been used.
 
