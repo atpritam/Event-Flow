@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, use } from "react";
 import { useSearchParams } from "next/navigation";
 import { Download, Calendar, User, Hash, Check, X } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
@@ -47,6 +47,7 @@ const TicketInfo = () => {
   const searchParams = useSearchParams();
   const { user } = useUser();
   const userId = user?.publicMetadata.userId || null;
+  console.log(userId);
   const [isUser, setIsUser] = useState(false);
   const [ticketInfo, setTicketInfo] = useState<TicketInfoType | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -80,6 +81,7 @@ const TicketInfo = () => {
       setEventId(eventId);
       setOrderId(orderId);
       setOrganizerId(organizerId);
+      console.log(organizerId);
       validateTicket(data);
     }
   }, [searchParams]);
@@ -97,10 +99,15 @@ const TicketInfo = () => {
   }, [eventId, orderId]);
 
   useEffect(() => {
+    if (!userId || !organizerId) return;
     if (userId === organizerId) {
       setIsUser(true);
     }
   }, [userId, organizerId]);
+
+  useEffect(() => {
+    console.log(isUser);
+  }, [isUser]);
 
   useEffect(() => {
     if (ticketInfo) {
@@ -222,15 +229,18 @@ const TicketInfo = () => {
     <div>
       {isUser ? (
         <>
-          <div className="sm:hidden flex justify-center">
-            <Button
-              id="mark-used-button"
-              onClick={handleMarkAsUsed}
-              className="bg-red-600 text-white hover:bg-red-700"
-            >
-              {loadingFeedback ? "Processing" : "Mark as Used"}
-            </Button>
-          </div>
+          {!isUsed && (
+            <div className="sm:hidden flex justify-center">
+              <Button
+                id="mark-used-button"
+                onClick={handleMarkAsUsed}
+                className="bg-red-600 text-white hover:bg-red-700"
+              >
+                {loadingFeedback ? "Processing" : "Mark as Used"}
+              </Button>
+            </div>
+          )}
+
           <div className="max-w-2xl w-full mx-auto p-4 md:w-[600px]">
             <Card className="overflow-hidden relative">
               <CardContent className="p-6">
@@ -385,18 +395,18 @@ const TicketInfo = () => {
                 <div className="absolute top-4 right-20 flex flex-col justify-center items-center">
                   {valid ? (
                     isUsed ? (
-                      <div className="text-yellow-600 font-semibold">
-                        <X className="w-6 h-6 inline-block mr-2" />
+                      <div className="text-white font-semibold flex flex-col justify-center items-center">
+                        <X className="w-6 h-6 inline-block" />
                         <span>Used</span>
                       </div>
                     ) : (
-                      <div className="text-green-600 font-semibold">
+                      <div className="text-white font-semibold flex flex-col justify-center items-center">
                         <Check className="w-6 h-6 inline-block mr-2" />
                         <span>Valid</span>
                       </div>
                     )
                   ) : (
-                    <div className="text-red-600 font-semibold">
+                    <div className="text-white font-semibold flex flex-col justify-center items-center">
                       <X className="w-6 h-6 inline-block mr-2" />
                       <span>Expired</span>
                     </div>
