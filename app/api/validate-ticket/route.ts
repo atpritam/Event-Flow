@@ -37,6 +37,7 @@ export async function POST(req: Request) {
         eventEndDateTime: order.event.endDateTime,
         attendeeName: `${order.buyer.firstName} ${order.buyer.lastName}`,
         orderId: order._id.toString(),
+        used: order.used,
       },
     });
   } catch (error) {

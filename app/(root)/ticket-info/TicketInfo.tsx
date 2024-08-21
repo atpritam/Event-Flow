@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import { Download, Calendar, User, Hash, Check, X } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
@@ -11,7 +11,27 @@ import Image from "next/image";
 import QRCode from "react-qr-code";
 import { useUser } from "@clerk/nextjs";
 import { markOrderAsUsed } from "@/lib/actions/order.action";
-import { set } from "mongoose";
+import { Checkbox } from "@/components/ui/checkbox";
+
+export function AutoCheckbox({
+  isChecked,
+  onChange,
+}: {
+  isChecked: boolean;
+  onChange: (checked: boolean) => void;
+}) {
+  return (
+    <div className="flex items-center justify-center space-x-2 mt-4">
+      <Checkbox id="auto" checked={isChecked} onCheckedChange={onChange} />
+      <label
+        htmlFor="auto"
+        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+      >
+        Auto mark scanned tickets as used.
+      </label>
+    </div>
+  );
+}
 
 interface TicketInfoType {
   eventId: string;
@@ -20,12 +40,13 @@ interface TicketInfoType {
   eventEndDateTime: string;
   attendeeName: string;
   orderId: string;
+  used: boolean;
 }
 
 const TicketInfo = () => {
   const searchParams = useSearchParams();
   const { user } = useUser();
-  const userId = user?.publicMetadata.userId;
+  const userId = user?.publicMetadata.userId || null;
   const [isUser, setIsUser] = useState(false);
   const [ticketInfo, setTicketInfo] = useState<TicketInfoType | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -41,11 +62,17 @@ const TicketInfo = () => {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [loadingFeedback, setLoadingFeedback] = useState<string | null>(null);
   const [isUsed, setIsUsed] = useState(false);
+  const [autoMark, setAutoMark] = useState<boolean>(false);
 
   const ticketRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    const storedAutoMark = localStorage.getItem("autoMark");
+    if (storedAutoMark) {
+      setAutoMark(JSON.parse(storedAutoMark));
+    }
+
     setIsLoading(true);
     const data = searchParams.get("data");
     if (data) {
@@ -80,8 +107,15 @@ const TicketInfo = () => {
       const eventEndDateTime = new Date(ticketInfo.eventEndDateTime);
       const now = new Date();
       setValid(now <= eventEndDateTime);
+      setIsUsed(ticketInfo.used);
     }
   }, [ticketInfo]);
+
+  useEffect(() => {
+    if (autoMark && !isUsed && ticketInfo) {
+      handleMarkAsUsed();
+    }
+  }, [autoMark, isUsed, ticketInfo]);
 
   const validateTicket = async (data: string) => {
     setIsLoading(true);
@@ -148,6 +182,11 @@ const TicketInfo = () => {
     }
   };
 
+  const handleAutoMarkChange = (checked: boolean) => {
+    setAutoMark(checked);
+    localStorage.setItem("autoMark", JSON.stringify(checked));
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center p-4">
@@ -182,84 +221,99 @@ const TicketInfo = () => {
   return (
     <div>
       {isUser ? (
-        <div className="max-w-2xl w-full mx-auto p-4 md:w-[600px]">
-          <Card className="overflow-hidden relative">
-            <CardContent className="p-6">
-              <h1 className="text-3xl font-bold text-gray-800 mb-4">
-                Event Details
-              </h1>
-              <div className="space-y-6">
-                <div>
-                  <h2 className="text-2xl font-semibold text-gray-800">
-                    {ticketInfo?.eventName}
-                  </h2>
-                </div>
-                <Separator />
-                <div className="flex justify-between flex-col gap-2">
+        <>
+          <div className="sm:hidden flex justify-center">
+            <Button
+              id="mark-used-button"
+              onClick={handleMarkAsUsed}
+              className="bg-red-600 text-white hover:bg-red-700"
+            >
+              {loadingFeedback ? "Processing" : "Mark as Used"}
+            </Button>
+          </div>
+          <div className="max-w-2xl w-full mx-auto p-4 md:w-[600px]">
+            <Card className="overflow-hidden relative">
+              <CardContent className="p-6">
+                <h1 className="text-3xl font-bold text-gray-800 mb-4">
+                  Event Details
+                </h1>
+                <div className="space-y-6">
                   <div>
-                    <h3 className="text-sm font-medium text-gray-500">
-                      Attendee
-                    </h3>
-                    <div className="flex items-center mt-1">
-                      <User className="w-5 h-5 mr-2 text-gray-400" />
-                      <p className="text-lg font-medium">
-                        {ticketInfo?.attendeeName}
-                      </p>
-                    </div>
+                    <h2 className="text-2xl font-semibold text-gray-800">
+                      {ticketInfo?.eventName}
+                    </h2>
                   </div>
-                  <div>
-                    <h3 className="text-sm font-medium text-gray-500">
-                      Order ID
-                    </h3>
-                    <div className="flex items-center mt-1">
-                      <Hash className="w-5 h-5 mr-2 text-gray-400" />
-                      <p className="text-lg font-medium">
-                        {ticketInfo?.orderId}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                <Separator />
-                <div className="text-center mt-8">
-                  {valid ? (
-                    isUsed ? (
-                      <div className="text-green-600 font-semibold">
-                        <Check className="w-6 h-6 inline-block mr-2" />
-                        <span>Used Ticket</span>
+                  <Separator />
+                  <div className="flex justify-between flex-col gap-2">
+                    <div>
+                      <h3 className="text-sm font-medium text-gray-500">
+                        Attendee
+                      </h3>
+                      <div className="flex items-center mt-1">
+                        <User className="w-5 h-5 mr-2 text-gray-400" />
+                        <p className="text-lg font-medium">
+                          {ticketInfo?.attendeeName}
+                        </p>
                       </div>
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-medium text-gray-500">
+                        Order ID
+                      </h3>
+                      <div className="flex items-center mt-1">
+                        <Hash className="w-5 h-5 mr-2 text-gray-400" />
+                        <p className="text-lg font-medium">
+                          {ticketInfo?.orderId}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <Separator />
+                  <div className="text-center mt-8">
+                    {valid ? (
+                      isUsed ? (
+                        <div className="text-yellow-600 font-semibold">
+                          <X className="w-6 h-6 inline-block mr-2" />
+                          <span>Used Ticket</span>
+                        </div>
+                      ) : (
+                        <div className="text-green-600 font-semibold">
+                          <Check className="w-6 h-6 inline-block mr-2" />
+                          <span>Valid Ticket</span>
+                        </div>
+                      )
                     ) : (
-                      <div className="text-green-600 font-semibold">
-                        <Check className="w-6 h-6 inline-block mr-2" />
-                        <span>Valid Ticket</span>
+                      <div className="text-red-600 font-semibold">
+                        <X className="w-6 h-6 inline-block mr-2" />
+                        <span>Expired Ticket</span>
                       </div>
-                    )
-                  ) : (
-                    <div className="text-red-600 font-semibold">
-                      <X className="w-6 h-6 inline-block mr-2" />
-                      <span>Expired Ticket</span>
+                    )}
+                  </div>
+                  {error && (
+                    <div className="mt-4 text-red-600 font-semibold text-center">
+                      {error}
                     </div>
                   )}
                 </div>
-                {error && (
-                  <div className="mt-4 text-red-600 font-semibold text-center">
-                    {error}
-                  </div>
-                )}
-              </div>
-            </CardContent>
-            {isUser && !isUsed && (
-              <div className="absolute top-4 right-4">
-                <Button
-                  id="mark-used-button"
-                  onClick={handleMarkAsUsed}
-                  className="bg-red-600 text-white hover:bg-red-700"
-                >
-                  {loadingFeedback ? "Processing" : "Mark as Used"}
-                </Button>
-              </div>
-            )}
-          </Card>
-        </div>
+              </CardContent>
+              {isUser && !isUsed && (
+                <div className="absolute sm:top-4 sm:right-4 hidden sm:block">
+                  <Button
+                    id="mark-used-button"
+                    onClick={handleMarkAsUsed}
+                    className="bg-red-600 text-white hover:bg-red-700"
+                  >
+                    {loadingFeedback ? "Processing" : "Mark as Used"}
+                  </Button>
+                </div>
+              )}
+            </Card>
+            <AutoCheckbox
+              isChecked={autoMark}
+              onChange={handleAutoMarkChange}
+            />
+          </div>
+        </>
       ) : (
         <div className="max-w-2xl w-full mx-auto p-4">
           <Card ref={ticketRef} className="overflow-hidden relative">
@@ -330,19 +384,22 @@ const TicketInfo = () => {
                 </div>
                 <div className="absolute top-4 right-20 flex flex-col justify-center items-center">
                   {valid ? (
-                    <>
-                      <Check className="w-6 h-6 mr-2 text-white" />
-                      <p className="text-sm font-semibold text-white mr-2">
-                        Valid
-                      </p>
-                    </>
+                    isUsed ? (
+                      <div className="text-yellow-600 font-semibold">
+                        <X className="w-6 h-6 inline-block mr-2" />
+                        <span>Used</span>
+                      </div>
+                    ) : (
+                      <div className="text-green-600 font-semibold">
+                        <Check className="w-6 h-6 inline-block mr-2" />
+                        <span>Valid</span>
+                      </div>
+                    )
                   ) : (
-                    <>
-                      <X className="w-6 h-6 mr-2 text-white" />
-                      <p className="text-sm font-semibold text-white mr-2">
-                        Expired
-                      </p>
-                    </>
+                    <div className="text-red-600 font-semibold">
+                      <X className="w-6 h-6 inline-block mr-2" />
+                      <span>Expired</span>
+                    </div>
                   )}
                 </div>
                 <div className="mt-8 text-center">

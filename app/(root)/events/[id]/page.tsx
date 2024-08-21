@@ -11,6 +11,9 @@ import { auth } from "@clerk/nextjs/server";
 import Image from "next/image";
 import React from "react";
 import EventLink from "@/components/shared/EventLink";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import DeleteConfirmation from "@/components/shared/DeleteConfirmation";
 
 const EventDetails = async ({ params, searchParams }: SearchParamProps) => {
   const eventId = params.id;
@@ -43,16 +46,37 @@ const EventDetails = async ({ params, searchParams }: SearchParamProps) => {
           <div className="flex flex-col w-full gap-8 p-5 md:p-10">
             <div className="flex flex-col gap-6">
               <h2 className="h2-bold">{event.title}</h2>
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-                <div className="flex gap-3">
-                  <p className="p-bold-20 rounded-full bg-green-500/10 px-5 py-2 text-green-700">
-                    {event.isFree ? "Free" : `$${event.price}`}
-                  </p>
-                  <p className="p-medium-16 rounded-full bg-grey-500/10 px-4 py-2.5 text-grey-500">
-                    {event.category.name}
-                  </p>
+              <div className="flex flex-col gap-4 sm:flex-col sm:items-start">
+                <div className="flex gap-6">
+                  <div className="flex gap-3">
+                    <p className="p-bold-20 rounded-full bg-green-500/10 px-5 py-2 text-green-700">
+                      {event.isFree ? "Free" : `$${event.price}`}
+                    </p>
+                    <p className="p-medium-16 rounded-full bg-grey-500/10 px-4 py-2.5 text-grey-500">
+                      {event.category.name}
+                    </p>
+                  </div>
+                  {isEventCreator && (
+                    <div
+                      className="flex flex-row gap-2"
+                      style={{ transform: "scale(1.4)" }}
+                    >
+                      <Link
+                        href={`/events/${event._id}/update`}
+                        className="flex justify-center items-center"
+                      >
+                        <Image
+                          src="/assets/icons/edit.svg"
+                          alt="edit"
+                          width={20}
+                          height={20}
+                        />
+                      </Link>
+                      <DeleteConfirmation eventId={event._id} />
+                    </div>
+                  )}
                 </div>
-                <div className="p-medium-18 ml-2 mt-2 sm:mt-0 flex flex-row items-center">
+                <div className="p-medium-18 ml-2 sm:mt-0 flex flex-row items-center">
                   <span>by</span>
                   <EventLink
                     href={
@@ -67,11 +91,26 @@ const EventDetails = async ({ params, searchParams }: SearchParamProps) => {
                 </div>
               </div>
             </div>
-            {ticketsAvailable ? (
-              <CheckoutButton event={event} />
-            ) : (
-              <p className="text-red-500 font-bold">
-                Sorry, this event has already finished.
+            <div className="flex flex-col sm:gap-4">
+              <div className="flex flex-row gap-4 justify-start">
+                {ticketsAvailable && ticketsAvailable && (
+                  <CheckoutButton event={event} />
+                )}
+                {isEventCreator && (
+                  <EventLink
+                    href={`/orders?eventId=${event._id}`}
+                    className="flex gap-2"
+                  >
+                    <Button type="submit" role="link" className="sm:w-fit">
+                      View Orders
+                    </Button>
+                  </EventLink>
+                )}
+              </div>
+            </div>
+            {!ticketsAvailable && (
+              <p className="text-red-500 font-bold flex sm:justify-start">
+                This event has already finished.
               </p>
             )}
             <div className="flex flex-col gap-5 ">
