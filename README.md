@@ -1,3 +1,5 @@
+![Event Flow GIF](Event-Flow.gif)
+
 # Event Flow
 
 [![React](https://img.shields.io/badge/React-18.2.0-whitesmoke?style=flat&logo=react&logoColor=white&logoSize=auto&labelColor=blue)](https://react.dev/)
