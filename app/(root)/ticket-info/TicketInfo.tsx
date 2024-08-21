@@ -178,12 +178,14 @@ const TicketInfo = () => {
 
       if (order.used) {
         setUsedBefore(true);
+        setIsUsed(false);
         return;
       }
 
       const updatedOrder = await markOrderAsUsed(orderId);
       if (updatedOrder?.used) {
         setIsUsed(true);
+        setUsedBefore(false);
       } else {
         throw new Error("Failed to mark ticket as used.");
       }
@@ -286,13 +288,13 @@ const TicketInfo = () => {
                   <div className="text-center mt-8">
                     {valid ? (
                       <>
-                        {usedBefore && !isUsed && (
+                        {usedBefore && (
                           <div className="text-red-600 font-semibold">
                             <X className="w-6 h-6 inline-block mr-2" />
                             <span>Used Before</span>
                           </div>
                         )}
-                        {isUsed && !usedBefore && (
+                        {!usedBefore && isUsed && (
                           <div className="text-yellow-600 font-semibold">
                             <Check className="w-6 h-6 inline-block mr-2" />
                             <span>Marked Used</span>
