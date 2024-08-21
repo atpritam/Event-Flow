@@ -10,6 +10,8 @@
 
 _Deployed Version: [EVENT-FLOW](https://event-flow-alpha.vercel.app)_
 
+This platform is **100% mobile responsive** and designed with a **mobile-first approach**, ensuring a seamless experience on devices of all sizes.
+
 ## Overview
 
 This Events application is built using Next.js. The app features a full-fledged event management system where users can create, view, manage and purchase tickets for events. The platform acts as a dynamic marketplace for events where users can discover and engage with events that interest them. Additionally, it integrates Stripe for payment processing and QR code scanning for secure ticket validation, offering a seamless experience for both event organizers and attendees.
