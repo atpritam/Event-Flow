@@ -244,9 +244,7 @@ const TicketInfo = () => {
           <div className="max-w-2xl w-full mx-auto p-4 md:w-[600px]">
             <Card className="overflow-hidden relative">
               <CardContent className="p-6">
-                <h1 className="text-3xl font-bold text-gray-800 mb-4">
-                  Event Details
-                </h1>
+                <h1 className="text-3xl font-bold text-gray-800 mb-4">Event</h1>
                 <div className="space-y-6">
                   <div>
                     <h2 className="text-2xl font-semibold text-gray-800">
