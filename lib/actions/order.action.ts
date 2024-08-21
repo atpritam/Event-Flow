@@ -189,16 +189,6 @@ export const markOrderAsUsed = async (orderId: string) => {
 
     if (!orderId) throw new Error("Order ID is required");
 
-    const order = await Order.findById(orderId);
-
-    if (!order) {
-      throw new Error("Order not found");
-    }
-
-    if (order.used) {
-      throw new Error("Order is already marked as used");
-    }
-
     const updatedOrder = await Order.findByIdAndUpdate(
       orderId,
       { used: true },

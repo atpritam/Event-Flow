@@ -185,6 +185,8 @@ For event organizers, ticket validation is a seamless process integrated into th
 This robust validation process ensures only legitimate tickets are accepted, offering peace of mind for organizers and attendees alike.
 
 ![Ticket Validation](Mark-As-Used.png)
+![Ticked Marked As Used](Marked-Used.png)
+![Ticket Used Before](Used-Before.png)
 
 ## File Uploads
 
