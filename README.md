@@ -172,7 +172,7 @@ Event tickets are designed for both user convenience and security, featuring uni
 
 For event organizers, ticket validation is a seamless process integrated into the organizer's account. Here's how it works:
 
-1. **Organizer Access**: When logged in, users who have published an event can mark tickets for their event as used directly through the platform.
+1. **Organizer Access**: When logged in, users who have published an event can scan the QR Code to mark tickets for their event as used directly through the platform.
 
 2. **Server-Side Validation**:
    - **Automatic Verification**: Each time a ticket's QR code is scanned, the system performs a robust server-side validation.
