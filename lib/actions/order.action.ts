@@ -163,11 +163,41 @@ export async function getOrdersByUser({
   }
 }
 
+export async function getOrderByID(orderId: string) {
+  try {
+    await connectToDatabase();
+
+    if (!orderId) throw new Error("Order ID is required");
+
+    const order = await Order.findById(orderId)
+      .populate({ path: "event", model: Event })
+      .populate({ path: "buyer", model: User });
+
+    if (!order) {
+      throw new Error("Order not found");
+    }
+
+    return JSON.parse(JSON.stringify(order));
+  } catch (error) {
+    handleError(error);
+  }
+}
+
 export const markOrderAsUsed = async (orderId: string) => {
   try {
     await connectToDatabase();
 
     if (!orderId) throw new Error("Order ID is required");
+
+    const order = await Order.findById(orderId);
+
+    if (!order) {
+      throw new Error("Order not found");
+    }
+
+    if (order.used) {
+      throw new Error("Order is already marked as used");
+    }
 
     const updatedOrder = await Order.findByIdAndUpdate(
       orderId,
@@ -175,7 +205,7 @@ export const markOrderAsUsed = async (orderId: string) => {
       { new: true }
     );
 
-    if (!updatedOrder) throw new Error("Order not found");
+    if (!updatedOrder) throw new Error("Order not found after update");
 
     return JSON.parse(JSON.stringify(updatedOrder));
   } catch (error) {

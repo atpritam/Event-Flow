@@ -10,7 +10,7 @@ import html2canvas from "html2canvas";
 import Image from "next/image";
 import QRCode from "react-qr-code";
 import { useUser } from "@clerk/nextjs";
-import { markOrderAsUsed } from "@/lib/actions/order.action";
+import { getOrderByID, markOrderAsUsed } from "@/lib/actions/order.action";
 import { Checkbox } from "@/components/ui/checkbox";
 
 export function AutoCheckbox({
@@ -47,7 +47,6 @@ const TicketInfo = () => {
   const searchParams = useSearchParams();
   const { user } = useUser();
   const userId = user?.publicMetadata.userId || null;
-  console.log(userId);
   const [isUser, setIsUser] = useState(false);
   const [ticketInfo, setTicketInfo] = useState<TicketInfoType | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -60,10 +59,10 @@ const TicketInfo = () => {
   const [orderId, setOrderId] = useState<string | null>(null);
   const [organizerId, setOrganizerId] = useState<string | null>(null);
   const [value, setValue] = useState<string>("");
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [loadingFeedback, setLoadingFeedback] = useState<string | null>(null);
   const [isUsed, setIsUsed] = useState(false);
   const [autoMark, setAutoMark] = useState<boolean>(false);
+  const [usedBefore, setUsedBefore] = useState<boolean>(false);
 
   const ticketRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -81,7 +80,6 @@ const TicketInfo = () => {
       setEventId(eventId);
       setOrderId(orderId);
       setOrganizerId(organizerId);
-      console.log(organizerId);
       validateTicket(data);
     }
   }, [searchParams]);
@@ -104,10 +102,6 @@ const TicketInfo = () => {
       setIsUser(true);
     }
   }, [userId, organizerId]);
-
-  useEffect(() => {
-    console.log(isUser);
-  }, [isUser]);
 
   useEffect(() => {
     if (ticketInfo) {
@@ -170,16 +164,28 @@ const TicketInfo = () => {
   const handleMarkAsUsed = async () => {
     setLoadingFeedback("Processing...");
     setError(null);
-    setSuccessMessage(null);
 
     try {
-      const updatedOrder = await markOrderAsUsed(ticketInfo?.orderId!);
-      const isUsed = updatedOrder?.used;
-      if (isUsed) {
-        setSuccessMessage("Ticket marked as used successfully.");
+      const orderId = ticketInfo?.orderId;
+      if (!orderId) {
+        throw new Error("Order ID is not available.");
+      }
+
+      const order = await getOrderByID(orderId);
+      if (!order) {
+        throw new Error("Order not found.");
+      }
+
+      if (order.used) {
+        setUsedBefore(true);
+        return;
+      }
+
+      const updatedOrder = await markOrderAsUsed(orderId);
+      if (updatedOrder?.used) {
         setIsUsed(true);
       } else {
-        setError("Failed to mark ticket as used.");
+        throw new Error("Failed to mark ticket as used.");
       }
     } catch (err) {
       setError("Failed to mark ticket as used.");
@@ -229,7 +235,7 @@ const TicketInfo = () => {
     <div>
       {isUser ? (
         <>
-          {!isUsed && (
+          {!isUsed && !usedBefore && (
             <div className="sm:hidden flex justify-center">
               <Button
                 id="mark-used-button"
@@ -279,17 +285,26 @@ const TicketInfo = () => {
                   <Separator />
                   <div className="text-center mt-8">
                     {valid ? (
-                      isUsed ? (
-                        <div className="text-yellow-600 font-semibold">
-                          <X className="w-6 h-6 inline-block mr-2" />
-                          <span>Used Ticket</span>
-                        </div>
-                      ) : (
-                        <div className="text-green-600 font-semibold">
-                          <Check className="w-6 h-6 inline-block mr-2" />
-                          <span>Valid Ticket</span>
-                        </div>
-                      )
+                      <>
+                        {usedBefore && !isUsed && (
+                          <div className="text-red-600 font-semibold">
+                            <Check className="w-6 h-6 inline-block mr-2" />
+                            <span>Used Before</span>
+                          </div>
+                        )}
+                        {isUsed && !usedBefore && (
+                          <div className="text-yellow-600 font-semibold">
+                            <X className="w-6 h-6 inline-block mr-2" />
+                            <span>Marked Used</span>
+                          </div>
+                        )}
+                        {!isUsed && !usedBefore && (
+                          <div className="text-green-600 font-semibold">
+                            <Check className="w-6 h-6 inline-block mr-2" />
+                            <span>Valid Ticket</span>
+                          </div>
+                        )}
+                      </>
                     ) : (
                       <div className="text-red-600 font-semibold">
                         <X className="w-6 h-6 inline-block mr-2" />
@@ -297,6 +312,7 @@ const TicketInfo = () => {
                       </div>
                     )}
                   </div>
+
                   {error && (
                     <div className="mt-4 text-red-600 font-semibold text-center">
                       {error}
@@ -395,7 +411,7 @@ const TicketInfo = () => {
                 </div>
                 <div className="absolute top-4 right-20 flex flex-col justify-center items-center">
                   {valid ? (
-                    isUsed ? (
+                    isUsed || usedBefore ? (
                       <div className="text-white font-semibold flex flex-col justify-center items-center">
                         <X className="w-6 h-6 inline-block" />
                         <span>Used</span>
