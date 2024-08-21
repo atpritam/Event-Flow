@@ -322,7 +322,7 @@ const TicketInfo = () => {
                   )}
                 </div>
               </CardContent>
-              {isUser && !markedUsed && (
+              {isUser && !markedUsed && !usedBefore && (
                 <div className="absolute sm:top-4 sm:right-4 hidden sm:block">
                   <Button
                     id="mark-used-button"
