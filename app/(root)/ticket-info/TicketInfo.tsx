@@ -326,7 +326,10 @@ const TicketInfo = () => {
         </>
       ) : (
         <div className="max-w-2xl w-full mx-auto p-4">
-          <Card ref={ticketRef} className="overflow-hidden relative">
+          <Card
+            ref={ticketRef}
+            className="overflow-hidden relative sm:w-[600px]"
+          >
             <div ref={contentRef}>
               <div className="bg-gradient-to-r from-[royalblue] to-purple-600 p-6">
                 <Image

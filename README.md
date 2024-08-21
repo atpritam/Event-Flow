@@ -12,7 +12,7 @@ _Deployed Version: [EVENT-FLOW](https://event-flow-alpha.vercel.app)_
 
 ## Overview
 
-This Events application is built using Next.js. The app features a full-fledged event management system where users can create, view, manage and purchase tickets for events. The platform acts as a dynamic marketplace for events where users can discover and engage with events that interest them. Additionally, it integrates payment processing with Stripe and ticket validation with QR codes.
+This Events application is built using Next.js. The app features a full-fledged event management system where users can create, view, manage and purchase tickets for events. The platform acts as a dynamic marketplace for events where users can discover and engage with events that interest them. Additionally, it integrates Stripe for payment processing and QR code scanning for secure ticket validation, offering a seamless experience for both event organizers and attendees.
 
 ## Table of Contents
 
@@ -22,35 +22,29 @@ This Events application is built using Next.js. The app features a full-fledged 
 4. [Environment Variables](#environment-variables)
 5. [Database Models](#database-models)
 6. [Server Actions](#server-actions)
-7. [File Uploads](#file-uploads)
-8. [Contributing](#contributing)
-9. [License](#license)
+7. [Event Ticket Overview](#event-ticket-overview)
+8. [File Uploads](#file-uploads)
+9. [Contributing](#contributing)
+10. [License](#license)
 
 ## Features
 
 ### Event Management:
 
-- Users can create, update, and delete events.
-- Event organizers can view detailed order information, including attendee details and ticket sales.
+- Users can `create`, `update`, and `delete` events.
+- Event organizers can view detailed order information, including attendee details and `ticket sales`.
 
 ### Ticket Purchase and Validation:
 
-- Users can purchase tickets for events via Stripe.
-- Event organizers can validate tickets via a QR code system.
+- Users can purchase tickets for events via `Stripe`.
+- Organizers can `validate and mark` tickets as used through a QR code system.
 - Downloadable tickets in image format for easy sharing and validation.
 
 ### Event Discovery:
 
-- Users can search for events or filter them by category.
-- The platform also suggests related events based on categories.
-- Users can view other profiles to see the events organized by other users.
-
-##
-
-- User authentication and management with Clerk.
-- Integrated Stripe payment processing for event orders.
-- Image uploads for event images using UploadThing.
-- Responsive UI built with Shadcn UI components and Tailwind CSS.
+- Search and filter events by category.
+- The platform also `suggests related events` based on categories.
+- View other user profiles to explore events they have organized.
 
 ## Technologies
 
@@ -106,38 +100,33 @@ Configure the following environment variables in your `.env.local` file:
 
 ```env
 # Clerk
-
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=YOUR PUBLIC CLERK PUBLISHABLE KEY
-CLERK_SECRET_KEY=YOUR CLERK SECRET KEY
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your-public-clerk-publishable-key
+CLERK_SECRET_KEY=your-clerk-secret-key
 
 NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
 NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
 
-WEBHOOK_SECRET=YOUR WEBHOOK CLERK SECRET
+WEBHOOK_SECRET=your-clerk-webhook-secret
 
 # MongoDB
-
-MONGODB_URI=YOUR MONGODB URI STRING
+MONGODB_URI=your-mongodb-uri
 
 # UploadThing
-
-UPLOADTHING_SECRET=YOUR UPLOADTHING SECRET
-UPLOADTHING_APP_ID=YOUR UPLOADTHING APP ID
+UPLOADTHING_SECRET=your-uploadthing-secret
+UPLOADTHING_APP_ID=your-uploadthing-app-id
 
 # Stripe
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=your-public-stripe-publishable-key
+STRIPE_SECRET_KEY=your-stripe-secret-key
 
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=YOUR PUBLIC STRIPE PUBLISHABLE KEY
-STRIPE_SECRET_KEY=YOUR STRIPE SECRET KEY
+STRIPE_WEBHOOK_SECRET=your-stripe-webhook-secret
 
-STRIPE_WEBHOOK_SECRET=YOUR STRIPE WEBHOOK SECRET
-
-# Next Public Server
-
-NEXT_PUBLIC_SERVER_URL=http://localhost:3000/ (OR YOUR DEPLOYED SITE URL)
+# Next.js Public Server URL
+NEXT_PUBLIC_SERVER_URL=http://localhost:3000/ (or your deployed site URL)
 
 # Location API (https://rapidapi.com/gmapplatform/api/google-map-places)
+NEXT_PUBLIC_LOCATION_API=your-geo-location-api-key
 
-NEXT_PUBLIC_LOCATION_API=YOUR GEO LOCATION API KEY
 
 
 ```
@@ -149,7 +138,7 @@ The app uses Mongoose for defining database schemas. Below are the key models:
 - **User**: Manages user details including authentication via Clerk.
 - **Event**: Stores event details such as title, description, location, and organizer.
 - **Category**: Used for categorizing events.
-- **Order**: Records transactions and links them to users and events.
+- **Order**: This model tracks transactions, linking users to the events they've registered for. It also includes a field to record whether the tickets associated with a particular order have been marked as used, ensuring accurate tracking of ticket usage.
 
 ## Server Actions
 
@@ -173,26 +162,29 @@ The app utilizes server actions to interact with the MongoDB database. These act
   };
   ```
 
-- **Fetching All Categories**:
+## Event Ticket Overview
 
-  ```typescript
-  import { connectToDatabase } from "../database";
-  import Category from "../database/models/category.model";
+Event tickets are designed for both user convenience and security, featuring unique QR codes for seamless scanning and validation.
 
-  export const getAllCategories = async () => {
-    await connectToDatabase();
-    const categories = await Category.find();
-    return categories;
-  };
-  ```
+![Event Ticket with QR Code](Event-Ticket.png)
 
-### Installing Shadcn UI Components
+### Ticket Validation Process
 
-The app leverages some Shadcn UI components. To install the necessary Shadcn UI components, use the following command:
+For event organizers, ticket validation is a seamless process integrated into the organizer's account. Here's how it works:
 
-```bash
-npm install @shadcn/ui-alert-dialog @shadcn/ui-button @shadcn/ui-card @shadcn/ui-form @shadcn/ui-input @shadcn/ui-label @shadcn/ui-pagination @shadcn/ui-select @shadcn/ui-separator @shadcn/ui-sheet @shadcn/ui-textarea
-```
+1. **Organizer Access**: When logged in with an organizer account, you have the ability to mark tickets as used directly through the platform.
+
+2. **Server-Side Validation**:
+   - **Automatic Verification**: Each time a ticket's QR code is scanned, the system performs a robust server-side validation.
+   - **Validation Criteria**:
+     - **Order ID**: Confirms the ticket belongs to a valid order.
+     - **Event ID**: Ensures the ticket is associated with the correct event.
+     - **Event End Date**: Checks that the event has not expired.
+     - **Usage Status**: Verifies whether the ticket has already been used.
+
+This robust validation process ensures only legitimate tickets are accepted, offering peace of mind for organizers and attendees alike.
+
+![Ticket Validation](Mark-As-Used.png)
 
 ## File Uploads
 
