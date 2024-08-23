@@ -46,7 +46,7 @@ interface TicketInfoType {
 const TicketInfo = () => {
   const searchParams = useSearchParams();
   const { user } = useUser();
-  const userId = user?.publicMetadata.userId || null;
+  const userId: string = (user?.publicMetadata?.userId as string) || "";
   const [isUser, setIsUser] = useState(false);
   const [ticketInfo, setTicketInfo] = useState<TicketInfoType | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -57,7 +57,7 @@ const TicketInfo = () => {
   );
   const [eventId, setEventId] = useState<string | null>(null);
   const [orderId, setOrderId] = useState<string | null>(null);
-  const [organizerId, setOrganizerId] = useState<string | null>(null);
+  const [organizerId, setOrganizerId] = useState<string>("");
   const [value, setValue] = useState<string>("");
   const [loadingFeedback, setLoadingFeedback] = useState<string | null>(null);
   const [usedBefore, setUsedBefore] = useState<boolean>(false);
@@ -79,7 +79,7 @@ const TicketInfo = () => {
       const { eventId, orderId, organizerId } = JSON.parse(data);
       setEventId(eventId);
       setOrderId(orderId);
-      setOrganizerId(organizerId);
+      setOrganizerId(organizerId as string);
       validateTicket(data);
     }
   }, [searchParams]);
@@ -183,6 +183,7 @@ const TicketInfo = () => {
       }
 
       const updatedOrder = await markOrderAsUsed(orderId, userId);
+
       if (updatedOrder?.used) {
         setMarkedUsed(true);
         setUsedBefore(false);
