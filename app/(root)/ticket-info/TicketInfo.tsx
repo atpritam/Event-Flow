@@ -182,7 +182,7 @@ const TicketInfo = () => {
         return;
       }
 
-      const updatedOrder = await markOrderAsUsed(orderId);
+      const updatedOrder = await markOrderAsUsed(orderId, userId);
       if (updatedOrder?.used) {
         setMarkedUsed(true);
         setUsedBefore(false);
