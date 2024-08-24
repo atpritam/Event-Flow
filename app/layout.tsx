@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { Analytics } from "@vercel/analytics/react";
 
 import { ClerkProvider } from "@clerk/nextjs";
 
@@ -27,7 +28,10 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en">
-        <body className={inter.variable}>{children}</body>
+        <body className={inter.variable}>
+          {children}
+          <Analytics />
+        </body>
       </html>
     </ClerkProvider>
   );
