@@ -1,23 +1,23 @@
 import CategoryFilter from "@/components/shared/CategoryFilter";
+import Collection from "@/components/shared/Collection";
 import Search from "@/components/shared/Search";
 import { Button } from "@/components/ui/button";
 import { getAllEvents } from "@/lib/actions/event.actions";
 import { SearchParamProps } from "../types";
 import Image from "next/image";
 import Link from "next/link";
-import HomePageCollection from "./HomePageCollection";
 
 export default async function Home({ searchParams }: SearchParamProps) {
   const page = Number(searchParams?.page) || 1;
   const searchText = (searchParams?.query as string) || "";
   const category = (searchParams?.category as string) || "";
 
-  const eventsPromise = getAllEvents({
+  const events = await getAllEvents({
     query: searchText,
     category,
     page,
     limit: 6,
-  }).then((result) => result || { data: [], totalPages: 0 });
+  });
 
   return (
     <>
@@ -59,7 +59,15 @@ export default async function Home({ searchParams }: SearchParamProps) {
           <CategoryFilter />
         </div>
 
-        <HomePageCollection page={page} eventsPromise={eventsPromise} />
+        <Collection
+          data={events?.data}
+          emptyTitle="No Events Found"
+          emptyStateSubtext="Come back later"
+          collectionType="All"
+          limit={6}
+          page={page}
+          totalPages={events?.totalPages}
+        />
       </section>
     </>
   );
