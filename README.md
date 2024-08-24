@@ -14,6 +14,24 @@
 
 _Deployed Version: [EVENT-FLOW](https://event-flow-alpha.vercel.app)_
 
+#### Dummy Account
+
+For testing, use these dummy credentials or create your own account:
+
+- **Username:** `harrypotter`
+- **Password:** `harrypotterinnit`
+
+#### Stripe Test Card Information
+
+When performing interactive testing, you can use the following test card details:
+
+- **Card Number:** `4242 4242 4242 4242`
+- **Expiration Date:** Any valid future date (e.g., `12/34`)
+- **CVC:** Any three-digit code (e.g., `123`).
+- **Other Fields:** Any value can be used for the remaining form fields.
+
+---
+
 This platform is **100% mobile responsive** and designed with a **mobile-first approach**, ensuring a seamless experience on devices of all sizes.
 
 ## Overview
