@@ -14,6 +14,8 @@ import EventLink from "@/components/shared/EventLink";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import DeleteConfirmation from "@/components/shared/DeleteConfirmation";
+import ClientRender from "@/components/shared/ClientRender";
+import EventDate from "./EventDate";
 
 const EventDetails = async ({ params, searchParams }: SearchParamProps) => {
   const eventId = params.id;
@@ -97,9 +99,7 @@ const EventDetails = async ({ params, searchParams }: SearchParamProps) => {
             </div>
             <div className="flex flex-col sm:gap-4">
               <div className="flex flex-row gap-4 justify-start">
-                {ticketsAvailable && ticketsAvailable && (
-                  <CheckoutButton event={event} />
-                )}
+                {ticketsAvailable && <CheckoutButton event={event} />}
                 {isEventCreator && (
                   <EventLink
                     href={`/orders?eventId=${event._id}`}
@@ -125,16 +125,10 @@ const EventDetails = async ({ params, searchParams }: SearchParamProps) => {
                   width={32}
                   height={32}
                 />
-                <div>
-                  <div className="p-medium-16 lg:p-regular-20 flex flex-wrap items-center">
-                    <p>{formatDateTime(event.startDateTime).dateOnly} - </p>
-                    <p>{formatDateTime(event.endDateTime).dateOnly}</p>
-                  </div>
-                  <div className="p-medium-16 lg:p-regular-20 flex flex-wrap items-center">
-                    <p>{formatDateTime(event.startDateTime).timeOnly} - </p>
-                    <p>{formatDateTime(event.endDateTime).timeOnly}</p>
-                  </div>
-                </div>
+                <EventDate
+                  eventStartDateTime={event.startDateTime}
+                  eventEndDateTime={event.endDateTime}
+                />
               </div>
               <div className="p-regular-20 flex flex-row items-center gap-3">
                 <Image
