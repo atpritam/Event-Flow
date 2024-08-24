@@ -29,11 +29,14 @@ const EventsOrganized = ({
             Events Organized{!isUser && <span> by </span>}
             {userName}
           </h3>
-          <Button asChild className="button hidden sm:flex">
-            <Link href="/events/create">
-              <Plus className="mr-1" /> <span className="p-medium-18">New</span>
-            </Link>
-          </Button>
+          {isUser && (
+            <Button asChild className="button hidden sm:flex">
+              <Link href="/events/create">
+                <Plus className="mr-1" />{" "}
+                <span className="p-medium-18">New</span>
+              </Link>
+            </Button>
+          )}
         </div>
       </section>
       <section className="wrapper my-8">
