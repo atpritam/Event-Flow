@@ -14,9 +14,9 @@
 
 _Deployed Version: [EVENT-FLOW](https://event-flow-alpha.vercel.app)_
 
-#### Dummy Account
+#### Test Account
 
-For testing, use these dummy credentials or create your own account:
+For testing, use these credentials or create your own account:
 
 - **Username:** `harrypotter`
 - **Password:** `harrypotterinnit`
