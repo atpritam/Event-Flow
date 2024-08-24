@@ -1,4 +1,3 @@
-import { getUserIDByClerkId } from "@/lib/actions/user.actions";
 import { auth } from "@clerk/nextjs/server";
 import { getEventsByUser } from "@/lib/actions/event.actions";
 import { getOrdersByUser } from "@/lib/actions/order.action";

@@ -1,4 +1,3 @@
-// ProfilePageContent.tsx
 "use client";
 
 import React, { Suspense } from "react";
@@ -6,7 +5,6 @@ import { use } from "react";
 import Collection from "@/components/shared/Collection";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { Plus } from "lucide-react";
 import Loader from "@/components/shared/Loader";
 import { IEvent } from "@/lib/database/models/event.model";
 import { IOrder } from "@/lib/database/models/order.model";

@@ -17,7 +17,7 @@ import { eventDefaultValues } from "@/constants";
 import Dropdown from "./Dropdown";
 import { Textarea } from "../ui/textarea";
 import { FileUploader } from "./FileUploader";
-import { useEffect, useState } from "react";
+import { Suspense, use, useEffect, useState } from "react";
 import Image from "next/image";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -28,20 +28,21 @@ import { useRouter } from "next/navigation";
 import { createEvent, updateEvent } from "@/lib/actions/event.actions";
 import { IEvent } from "@/lib/database/models/event.model";
 import LocationInput from "./LocationInput";
-import { set } from "mongoose";
+import Loader from "./Loader";
 
 interface EventFormProps {
   userId: string;
   type: "Create" | "Update";
-  event?: IEvent;
+  eventPromise?: Promise<IEvent>;
 }
 
-const EventForm = ({ userId, type, event }: EventFormProps) => {
+const EventForm = ({ userId, type, eventPromise }: EventFormProps) => {
+  const event = eventPromise ? use(eventPromise) : null;
   const [files, setFiles] = useState<File[]>([]);
   const [dateOpen, setDateOpen] = useState(false);
   const [startDate, setStartDate] = useState<Date | null | undefined>(null);
   const [endDate, setEndDate] = useState<Date | null | undefined>(null);
-  let renderFlag = false;
+  const isUserAuthorized = userId === event?.organizer._id;
   const initialValues =
     event && type === "Update"
       ? {
@@ -141,282 +142,300 @@ const EventForm = ({ userId, type, event }: EventFormProps) => {
   };
 
   return (
-    <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="flex flex-col gap-5 px-4"
-      >
-        <div className="flex flex-col gap-5 md:flex-row">
-          <FormField
-            control={form.control}
-            name="title"
-            render={({ field }) => (
-              <FormItem className="w-full">
-                <FormControl>
-                  <Input
-                    placeholder="Event Title"
-                    {...field}
-                    className="input-field"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="categoryId"
-            render={({ field }) => (
-              <FormItem className="w-full">
-                <FormControl>
-                  <Dropdown
-                    onChangeHandler={field.onChange}
-                    value={field.value}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+    <>
+      {!isUserAuthorized && event ? (
+        <div className="wrapper my-8">
+          <h3 className="h3-bold text-center">
+            You are not authorized to {type.toLowerCase()} this event.
+          </h3>
         </div>
-        <div className="flex flex-col gap-5 md:flex-row">
-          <FormField
-            control={form.control}
-            name="description"
-            render={({ field }) => (
-              <FormItem className="w-full">
-                <FormControl className="h-40 sm:h-72 resize-none">
-                  <Textarea
-                    placeholder="Description"
-                    {...field}
-                    className="textarea"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="imageUrl"
-            render={({ field }) => (
-              <FormItem className="w-full">
-                <FormControl className="h-60 resize-none">
-                  <FileUploader
-                    onFieldChange={field.onChange}
-                    imageUrl={field.value}
-                    setFiles={setFiles}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-        <div className="flex flex-col gap-5 md:flex-row">
-          <FormField
-            control={form.control}
-            name="location"
-            render={({ field }) => (
-              <FormItem className="w-full">
-                <FormControl>
-                  <LocationInput
-                    value={field.value}
-                    onChange={field.onChange}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-        <div className="flex flex-col gap-5 md:flex-row">
-          <FormField
-            control={form.control}
-            name="startDateTime"
-            render={({ field }) => (
-              <FormItem className="w-full">
-                <FormControl
-                  onClick={() => {
-                    dateOpenController("startDateTime");
-                  }}
-                >
-                  <div className="flex-center overflow-hidden rounded-sm bg-grey-50 px-2">
-                    <Image
-                      src="/assets/icons/calendar.svg"
-                      width={20}
-                      height={20}
-                      alt="calendar"
-                      className="filter-grey"
-                    />
-                    {!startDate ? (
-                      <p className="ml-3 whitespace-nowrap text-grey-600">
-                        Start Date & Time
-                      </p>
-                    ) : null}
-                    <DatePicker
-                      selected={startDate}
-                      onChange={(date: Date | null) => {
-                        setStartDate(date);
-                        field.onChange(date);
+      ) : (
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="flex flex-col gap-5 px-4"
+          >
+            <div className="flex flex-col gap-5 md:flex-row">
+              <FormField
+                control={form.control}
+                name="title"
+                render={({ field }) => (
+                  <FormItem className="w-full">
+                    <FormControl>
+                      <Input
+                        placeholder="Event Title"
+                        {...field}
+                        className="input-field"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="categoryId"
+                render={({ field }) => (
+                  <FormItem className="w-full">
+                    <FormControl>
+                      <Dropdown
+                        onChangeHandler={field.onChange}
+                        value={field.value}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div className="flex flex-col gap-5 md:flex-row">
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem className="w-full">
+                    <FormControl className="h-40 sm:h-72 resize-none">
+                      <Textarea
+                        placeholder="Description"
+                        {...field}
+                        className="textarea"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="imageUrl"
+                render={({ field }) => (
+                  <FormItem className="w-full">
+                    <FormControl className="h-60 resize-none">
+                      <FileUploader
+                        onFieldChange={field.onChange}
+                        imageUrl={field.value}
+                        setFiles={setFiles}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div className="flex flex-col gap-5 md:flex-row">
+              <FormField
+                control={form.control}
+                name="location"
+                render={({ field }) => (
+                  <FormItem className="w-full">
+                    <FormControl>
+                      <LocationInput
+                        value={field.value}
+                        onChange={field.onChange}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div className="flex flex-col gap-5 md:flex-row">
+              <FormField
+                control={form.control}
+                name="startDateTime"
+                render={({ field }) => (
+                  <FormItem className="w-full">
+                    <FormControl
+                      onClick={() => {
+                        dateOpenController("startDateTime");
                       }}
-                      showTimeSelect
-                      timeFormat="HH:mm"
-                      timeIntervals={15}
-                      timeCaption="Time"
-                      dateFormat="MMMM d, yyyy h:mm aa"
-                      className="input-field"
-                      wrapperClassName="datePicker"
-                      id="startDateTime"
-                      onClickOutside={() => dateClickOutside("startDateTime")}
-                    />
-                  </div>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="endDateTime"
-            render={({ field }) => (
-              <FormItem className="w-full">
-                <FormControl
-                  onClick={() => {
-                    dateOpenController("endDateTime");
-                  }}
-                >
-                  <div className="flex-center overflow-hidden rounded-sm bg-grey-50 px-2">
-                    <Image
-                      src="/assets/icons/calendar.svg"
-                      width={20}
-                      height={20}
-                      alt="calendar"
-                      className="filter-grey"
-                    />
-                    {!endDate ? (
-                      <p className="ml-3 whitespace-nowrap text-grey-600">
-                        End Date & Time
-                      </p>
-                    ) : null}
-                    <DatePicker
-                      selected={endDate}
-                      onChange={(date: Date | null) => {
-                        setEndDate(date);
-                        field.onChange(date);
+                    >
+                      <div className="flex-center overflow-hidden rounded-sm bg-grey-50 px-2">
+                        <Image
+                          src="/assets/icons/calendar.svg"
+                          width={20}
+                          height={20}
+                          alt="calendar"
+                          className="filter-grey"
+                        />
+                        {!startDate ? (
+                          <p className="ml-3 whitespace-nowrap text-grey-600">
+                            Start Date & Time
+                          </p>
+                        ) : null}
+                        <DatePicker
+                          selected={startDate}
+                          onChange={(date: Date | null) => {
+                            setStartDate(date);
+                            field.onChange(date);
+                          }}
+                          showTimeSelect
+                          timeFormat="HH:mm"
+                          timeIntervals={15}
+                          timeCaption="Time"
+                          dateFormat="MMMM d, yyyy h:mm aa"
+                          className="input-field"
+                          wrapperClassName="datePicker"
+                          id="startDateTime"
+                          onClickOutside={() =>
+                            dateClickOutside("startDateTime")
+                          }
+                        />
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="endDateTime"
+                render={({ field }) => (
+                  <FormItem className="w-full">
+                    <FormControl
+                      onClick={() => {
+                        dateOpenController("endDateTime");
                       }}
-                      showTimeSelect
-                      timeFormat="HH:mm"
-                      timeIntervals={15}
-                      timeCaption="Time"
-                      dateFormat="MMMM d, yyyy h:mm aa"
-                      className="input-field"
-                      wrapperClassName="datePicker"
-                      id="endDateTime"
-                      onClickOutside={() => dateClickOutside("endDateTime")}
-                    />
-                  </div>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-        <div className="flex flex-col gap-5 md:flex-row">
-          <FormField
-            control={form.control}
-            name="price"
-            render={({ field }) => (
-              <FormItem className="w-full">
-                <FormControl>
-                  <div className="flex-center overflow-hidden rounded-sm bg-grey-50 px-2">
-                    <Image
-                      src="/assets/icons/dollar.svg"
-                      width={20}
-                      height={20}
-                      alt="price"
-                      className="filter-grey"
-                    />
-                    <Input
-                      placeholder="Price"
-                      {...field}
-                      className="input-field p-regular-16"
-                      type="number"
-                    />
-                    <FormField
-                      control={form.control}
-                      name="isFree"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormControl>
-                            <div className="flex items-center">
-                              <label
-                                htmlFor="isFree"
-                                className="text-grey-600 whitespace-nowrap pr-2 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                              >
-                                Free Event
-                              </label>
-                              <Checkbox
-                                id="isFree"
-                                className="mr-2"
-                                onCheckedChange={field.onChange}
-                                checked={field.value}
-                              />
-                            </div>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="url"
-            render={({ field }) => (
-              <FormItem className="w-full">
-                <FormControl>
-                  <div className="flex-center overflow-hidden rounded-sm bg-grey-50 px-2">
-                    <Image
-                      src="/assets/icons/link.svg"
-                      width={20}
-                      height={20}
-                      alt="link"
-                    />
-                    <Input
-                      placeholder="URl"
-                      {...field}
-                      className="input-field"
-                    />
-                  </div>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
+                    >
+                      <div className="flex-center overflow-hidden rounded-sm bg-grey-50 px-2">
+                        <Image
+                          src="/assets/icons/calendar.svg"
+                          width={20}
+                          height={20}
+                          alt="calendar"
+                          className="filter-grey"
+                        />
+                        {!endDate ? (
+                          <p className="ml-3 whitespace-nowrap text-grey-600">
+                            End Date & Time
+                          </p>
+                        ) : null}
+                        <DatePicker
+                          selected={endDate}
+                          onChange={(date: Date | null) => {
+                            setEndDate(date);
+                            field.onChange(date);
+                          }}
+                          showTimeSelect
+                          timeFormat="HH:mm"
+                          timeIntervals={15}
+                          timeCaption="Time"
+                          dateFormat="MMMM d, yyyy h:mm aa"
+                          className="input-field"
+                          wrapperClassName="datePicker"
+                          id="endDateTime"
+                          onClickOutside={() => dateClickOutside("endDateTime")}
+                        />
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div className="flex flex-col gap-5 md:flex-row">
+              <FormField
+                control={form.control}
+                name="price"
+                render={({ field }) => (
+                  <FormItem className="w-full">
+                    <FormControl>
+                      <div className="flex-center overflow-hidden rounded-sm bg-grey-50 px-2">
+                        <Image
+                          src="/assets/icons/dollar.svg"
+                          width={20}
+                          height={20}
+                          alt="price"
+                          className="filter-grey"
+                        />
+                        <Input
+                          placeholder="Price"
+                          {...field}
+                          className="input-field p-regular-16"
+                          type="number"
+                        />
+                        <FormField
+                          control={form.control}
+                          name="isFree"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormControl>
+                                <div className="flex items-center">
+                                  <label
+                                    htmlFor="isFree"
+                                    className="text-grey-600 whitespace-nowrap pr-2 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                  >
+                                    Free Event
+                                  </label>
+                                  <Checkbox
+                                    id="isFree"
+                                    className="mr-2"
+                                    onCheckedChange={field.onChange}
+                                    checked={field.value}
+                                  />
+                                </div>
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="url"
+                render={({ field }) => (
+                  <FormItem className="w-full">
+                    <FormControl>
+                      <div className="flex-center overflow-hidden rounded-sm bg-grey-50 px-2">
+                        <Image
+                          src="/assets/icons/link.svg"
+                          width={20}
+                          height={20}
+                          alt="link"
+                        />
+                        <Input
+                          placeholder="URl"
+                          {...field}
+                          className="input-field"
+                        />
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
 
-        <Button
-          type="submit"
-          size="lg"
-          disabled={form.formState.isSubmitting}
-          className="col-span-2 w-full"
-        >
-          {`${
-            form.formState.isSubmitting
-              ? type === "Update"
-                ? "Updating"
-                : "Creating"
-              : type
-          } Event`}
-        </Button>
-      </form>
-    </Form>
+            <Button
+              type="submit"
+              size="lg"
+              disabled={form.formState.isSubmitting}
+              className="col-span-2 w-full"
+            >
+              {`${
+                form.formState.isSubmitting
+                  ? type === "Update"
+                    ? "Updating"
+                    : "Creating"
+                  : type
+              } Event`}
+            </Button>
+          </form>
+        </Form>
+      )}
+    </>
   );
 };
 
-export default EventForm;
+export default function EventFormWrapper(props: EventFormProps) {
+  return (
+    <Suspense fallback={<Loader />}>
+      <EventForm {...props} />
+    </Suspense>
+  );
+}

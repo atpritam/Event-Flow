@@ -52,7 +52,7 @@ const EventsOrganized = ({
   );
 };
 
-export default function ProfilePageContentWrapper(props: EventsOrganizedProps) {
+export default function EventsOrganizedWrapper(props: EventsOrganizedProps) {
   return (
     <Suspense fallback={<Loader />}>
       <EventsOrganized {...props} />

@@ -6,18 +6,19 @@ import { getAllEvents } from "@/lib/actions/event.actions";
 import { SearchParamProps } from "../types";
 import Image from "next/image";
 import Link from "next/link";
+import HomePageCollection from "./HomePageCollection";
 
 export default async function Home({ searchParams }: SearchParamProps) {
   const page = Number(searchParams?.page) || 1;
   const searchText = (searchParams?.query as string) || "";
   const category = (searchParams?.category as string) || "";
 
-  const events = await getAllEvents({
+  const eventsPromise = getAllEvents({
     query: searchText,
     category,
     page,
     limit: 6,
-  });
+  }).then((result) => result || { data: [], totalPages: 0 });
 
   return (
     <>
@@ -59,15 +60,7 @@ export default async function Home({ searchParams }: SearchParamProps) {
           <CategoryFilter />
         </div>
 
-        <Collection
-          data={events?.data}
-          emptyTitle="No Events Found"
-          emptyStateSubtext="Come back later"
-          collectionType="All"
-          limit={6}
-          page={page}
-          totalPages={events?.totalPages}
-        />
+        <HomePageCollection page={page} eventsPromise={eventsPromise} />
       </section>
     </>
   );

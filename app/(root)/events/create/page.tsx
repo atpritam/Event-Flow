@@ -1,11 +1,9 @@
 import EventForm from "@/components/shared/EventForm";
-import { getUserIDByClerkId } from "@/lib/actions/user.actions";
 import { auth } from "@clerk/nextjs/server";
 
 const CreateEvent = async () => {
   const { sessionClaims } = auth();
-  const id = sessionClaims?.userID as string;
-  const userId = await getUserIDByClerkId(id);
+  const userId = sessionClaims?.userId as string;
 
   return (
     <>

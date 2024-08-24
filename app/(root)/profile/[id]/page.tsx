@@ -1,15 +1,8 @@
-import Collection from "@/components/shared/Collection";
-import { Button } from "@/components/ui/button";
-import { getUserIDByClerkId } from "@/lib/actions/user.actions";
 import { auth } from "@clerk/nextjs/server";
 import React from "react";
-import { Plus } from "lucide-react";
 import { getEventsByUser } from "@/lib/actions/event.actions";
 import { redirect } from "next/navigation";
 import { SearchParamProps } from "@/app/types";
-import EventLink from "@/components/shared/EventLink";
-import { SignedIn } from "@clerk/nextjs";
-import ProfilePageContent from "../ProfilePageContent";
 import EventsOrganized from "../EventsOrganized";
 
 const ProfilePage = async ({ params, searchParams }: SearchParamProps) => {
