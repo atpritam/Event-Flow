@@ -76,11 +76,15 @@ This Events application is built using Next.js. The app features a full-fledged 
 - **TypeScript**: Ensures type safety and improves code quality.
 - **MongoDB**: NoSQL database for storing application data.
 - **Mongoose**: ODM for MongoDB, used to define schemas and interact with the database.
+- **Tailwind CSS**: Utility-first CSS framework for responsive design.
 - **Clerk**: User authentication service.
 - **Stripe**: Payment processing for managing event orders.
 - **UploadThing**: Service for handling file uploads.
 - **Shadcn UI**: Set of pre-built UI components.
-- **Tailwind CSS**: Utility-first CSS framework for responsive design.
+- **React Hook Form**: Library for flexible and efficient form handling.
+- **Zod**: TypeScript-first schema declaration and validation library.
+- **React DatePicker**: Flexible date picker component for React.
+- **React QR Code**: Library for generating QR codes in React applications.
 
 ## Installation
 
