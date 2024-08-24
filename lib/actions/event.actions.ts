@@ -104,9 +104,18 @@ export async function getAllEvents({
   }
 }
 
-export async function deleteEvent({ eventId, path }: DeleteEventParams) {
+export async function deleteEvent({
+  eventId,
+  path,
+  userId,
+}: DeleteEventParams) {
   try {
     await connectToDatabase();
+
+    const event = await Event.findById(eventId).populate("organizer");
+    if (!event || event.organizer._id.toString() !== userId) {
+      throw new Error("Unauthorized or event not found");
+    }
 
     const deletedEvent = await Event.findByIdAndDelete(eventId);
     if (deletedEvent) revalidatePath(path);

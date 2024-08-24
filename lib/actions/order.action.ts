@@ -187,14 +187,13 @@ export const markOrderAsUsed = async (orderId: string, userId: string) => {
   try {
     await connectToDatabase();
 
-    if (!orderId || !userId) throw new Error("Order ID and User ID are required");
+    if (!orderId || !userId)
+      throw new Error("Order ID and User ID are required");
 
-    const order = await Order.findById(orderId).populate('event');
-
+    const order = await Order.findById(orderId).populate("event");
     if (!order) throw new Error("Order not found");
 
     const event = await Event.findById(order.event._id);
-
     if (!event) throw new Error("Event not found");
 
     // Authorization

@@ -18,7 +18,13 @@ import {
 
 import { deleteEvent } from "@/lib/actions/event.actions";
 
-const DeleteConfirmation = ({ eventId }: { eventId: string }) => {
+const DeleteConfirmation = ({
+  eventId,
+  userId,
+}: {
+  eventId: string;
+  userId: string;
+}) => {
   const pathname = usePathname();
   let [isPending, startTransition] = useTransition();
 
@@ -47,7 +53,7 @@ const DeleteConfirmation = ({ eventId }: { eventId: string }) => {
           <AlertDialogAction
             onClick={() =>
               startTransition(async () => {
-                await deleteEvent({ eventId, path: pathname });
+                await deleteEvent({ eventId, path: pathname, userId });
               })
             }
           >

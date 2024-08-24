@@ -26,7 +26,8 @@ const EventCard = ({
   const pathname = usePathname();
   const isProfilePage = pathname.includes("/profile");
   const { user } = useUser();
-  const isEventCreator = user?.publicMetadata.userId === event.organizer._id;
+  const userId = user?.publicMetadata.userId;
+  const isEventCreator = userId === event.organizer._id;
   const [loading, setLoading] = useState(false);
   const organizerName = `${event.organizer.firstName} ${event.organizer.lastName}`;
   const organizerProfileUrl = isEventCreator
@@ -57,7 +58,7 @@ const EventCard = ({
                 height={20}
               />
             </Link>
-            <DeleteConfirmation eventId={event._id} />
+            <DeleteConfirmation eventId={event._id} userId={userId as string} />
           </div>
         )}
         <div className="flex min-h-[230px] flex-col gap-3 p-5 md:gap-4">

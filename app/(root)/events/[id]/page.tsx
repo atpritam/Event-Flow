@@ -21,7 +21,8 @@ const EventDetails = async ({ params, searchParams }: SearchParamProps) => {
   const event = await getEventById(eventId);
 
   const { sessionClaims } = auth();
-  const isEventCreator = sessionClaims?.userID === event.organizer.clerkId;
+  const userId = sessionClaims?.userId;
+  const isEventCreator = userId === event.organizer._id;
 
   const relatedEvents = await getRelatedEventsByCategory({
     categoryId: event.category._id,
@@ -72,7 +73,10 @@ const EventDetails = async ({ params, searchParams }: SearchParamProps) => {
                           height={20}
                         />
                       </Link>
-                      <DeleteConfirmation eventId={event._id} />
+                      <DeleteConfirmation
+                        eventId={event._id}
+                        userId={userId as string}
+                      />
                     </div>
                   )}
                 </div>
