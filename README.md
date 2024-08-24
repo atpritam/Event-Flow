@@ -1,4 +1,4 @@
-<p align="center">
+<p>
   <img src="Event-Flow.gif" alt="Event Flow GIF" style="width: 100%; height: auto;">
 </p>
 
@@ -53,18 +53,18 @@ This Events application is built using Next.js. The app features a full-fledged 
 
 ## Features
 
-### Event Management:
+### Event Management
 
 - Users can `create`, `update`, and `delete` events.
 - Event organizers can view detailed order information, including attendee details and `ticket sales`.
 
-### Ticket Purchase and Validation:
+### Ticket Purchase and Validation
 
 - Users can purchase tickets for events via `Stripe`.
 - Organizers can `validate and mark` tickets as used through a QR code system.
 - Downloadable tickets in image format for easy sharing and validation.
 
-### Event Discovery:
+### Event Discovery
 
 - Search and filter events by category.
 - The platform also `suggests related events` based on categories.
@@ -168,27 +168,65 @@ The app uses Mongoose for defining database schemas. Below are the key models:
 - **Category**: Used for categorizing events.
 - **Order**: This model tracks transactions, linking users to the events they've registered for. It also includes a field to record whether the tickets associated with a particular order have been marked as used, ensuring accurate tracking of ticket usage.
 
+Your text is well-organized and clear, with a strong focus on security and functionality. I've made minor adjustments to enhance readability and ensure consistency.
+
 ## Server Actions
 
-The app utilizes server actions to interact with the MongoDB database. These actions are defined using `use server` in Next.js, ensuring that data fetching and manipulation happen server-side.
+The app uses server actions in Next.js, defined with `use server`, to interact with the MongoDB database. These server-side actions handle data fetching and manipulation while enforcing robust security measures to ensure data integrity and user authorization.
 
-### Examples
+### Authorization Checks
 
-- **Creating a Category**:
+All server actions involving data modifications incorporate strict authorization checks. These checks verify that the user initiating the action has the necessary permissions.
 
-  ```typescript
-  import { CreateCategoryParams } from "@/app/types";
-  import { connectToDatabase } from "../database";
-  import Category from "../database/models/category.model";
+**Example: Event Deletion**
 
-  export const createCategory = async ({
-    categoryName,
-  }: CreateCategoryParams) => {
+```typescript
+export async function deleteEvent({
+  eventId,
+  path,
+  userId,
+}: DeleteEventParams) {
+  try {
+    if (
+      !isValidObjectId(userId) ||
+      !isValidObjectId(eventId) ||
+      typeof path !== "string"
+    ) {
+      throw new Error("Invalid input");
+    }
+
     await connectToDatabase();
-    const newCategory = await Category.create({ name: categoryName });
-    return newCategory;
-  };
-  ```
+
+    const event = await Event.findById(eventId).populate("organizer");
+    if (!event || event.organizer._id.toHexString() !== userId) {
+      throw new Error("Unauthorized or event not found");
+    }
+
+    const deletedEvent = await Event.findByIdAndDelete(eventId);
+    if (deletedEvent) revalidatePath(path);
+  } catch (error) {
+    handleError(error);
+  }
+}
+```
+
+In this `deleteEvent` action:
+
+1. Input Validation: The function first validates inputs to ensure `userId` and `eventId` are valid MongoDB Object IDs and path is a string. This prevents invalid data from causing errors or security issues.
+2. Database Connection: It then connects to the database.
+3. Authorization Check: The function fetches the event and checks whether the `userId` matches the event organizer’s ID. If not, it throws an "Unauthorized or event not found" error.
+4. Event Deletion: If the user is authorized, the event is deleted. After successful deletion, it calls `revalidatePath` to maintain UI consistency.
+5. Error Handling: Errors are caught and handled by `handleError`, ensuring that any issues are logged or managed appropriately.
+
+### Implementation Across the Application
+
+This pattern is consistently applied across all server actions involving data modification, including but not limited to:
+
+- Creating and updating events
+- Processing orders
+- Marking tickets as used, as detailed in the Event Ticket Overview section below.
+
+By implementing these security measures at the server action level, the app provides a secure and robust foundation for data management.
 
 ## Event Ticket Overview
 
@@ -198,23 +236,23 @@ Event tickets are designed for both user convenience and security, featuring uni
 
 ### Ticket Validation Process
 
-For event organizers, ticket validation is a seamless process integrated into the organizer's account. Here's how it works:
+For event organizers, ticket validation is seamlessly integrated into their account. Here's how it works:
 
-1. **Organizer Access**: When logged in, users who have published an event can scan the QR Code to mark tickets for their event as used directly through the platform.
+1. **Organizer Access**: Logged-in users who have published an event can scan the QR code to mark tickets for their event as used directly through the platform.
 
 2. **Server-Side Validation**:
-   - **Automatic Verification**: Each time a ticket's QR code is scanned, the system performs a robust server-side validation.
+   - **Automatic Verification**: Each time a ticket's QR code is scanned, the system performs robust server-side validation.
    - **Validation Criteria**:
      - **Order ID**: Confirms the ticket belongs to a valid order.
      - **Event ID**: Ensures the ticket is associated with the correct event.
-     - **Organizer ID**: Grants access to event hosts to validate tickets and mark them as used.
+     - **Organizer ID**: Grants event hosts access to validate tickets and mark them as used.
      - **Event End Date**: Checks that the event has not expired.
      - **Usage Status**: Verifies whether the ticket has already been used.
 
-This robust validation process ensures only legitimate tickets are accepted, offering peace of mind for organizers and attendees alike.
+This robust validation process ensures that only legitimate tickets are accepted, offering peace of mind to organizers and attendees alike.
 
 ![Ticket Validation](Mark-As-Used.png)
-![Ticked Marked As Used](Marked-Used.png)
+![Ticket Marked As Used](Marked-Used.png)
 ![Ticket Used Before](Used-Before.png)
 
 ## File Uploads

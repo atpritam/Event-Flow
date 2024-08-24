@@ -14,6 +14,7 @@ import { connectToDatabase } from "../database";
 import Event from "../database/models/event.model";
 import User from "../database/models/user.model";
 import Category from "../database/models/category.model";
+import { isValidObjectId } from "mongoose";
 
 const getCategoryByName = async (name: string) => {
   return Category.findOne({ name: { $regex: name, $options: "i" } });
@@ -110,10 +111,18 @@ export async function deleteEvent({
   userId,
 }: DeleteEventParams) {
   try {
+    if (
+      !isValidObjectId(userId) ||
+      !isValidObjectId(eventId) ||
+      typeof path !== "string"
+    ) {
+      throw new Error("Invalid input");
+    }
+
     await connectToDatabase();
 
     const event = await Event.findById(eventId).populate("organizer");
-    if (!event || event.organizer._id.toString() !== userId) {
+    if (!event || event.organizer._id.toHexString() !== userId) {
       throw new Error("Unauthorized or event not found");
     }
 
@@ -126,6 +135,15 @@ export async function deleteEvent({
 
 export async function updateEvent({ userId, event, path }: UpdateEventParams) {
   try {
+    if (
+      !isValidObjectId(userId) ||
+      !isValidObjectId(event._id) ||
+      !isValidObjectId(event.categoryId) ||
+      typeof path !== "string"
+    ) {
+      throw new Error("Invalid input");
+    }
+
     await connectToDatabase();
 
     const eventToUpdate = await Event.findById(event._id);

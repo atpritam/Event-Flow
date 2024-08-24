@@ -7,6 +7,7 @@ import Order from "@/lib/database/models/order.model";
 import Event from "@/lib/database/models/event.model";
 import { revalidatePath } from "next/cache";
 import { CreateUserParams, UpdateUserParams } from "@/app/types";
+import mongoose from "mongoose";
 
 export const createUser = async (user: CreateUserParams) => {
   try {
@@ -66,10 +67,13 @@ export async function updateUser(clerkId: string, user: UpdateUserParams) {
 }
 
 export async function deleteUser(clerkId: string) {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
   try {
     await connectToDatabase();
 
-    const userToDelete = await User.findOne({ clerkId });
+    const userToDelete = await User.findOne({ clerkId }).session(session);
 
     if (!userToDelete) {
       throw new Error("User not found");
@@ -78,20 +82,30 @@ export async function deleteUser(clerkId: string) {
     await Promise.all([
       Event.updateMany(
         { _id: { $in: userToDelete.events } },
-        { $pull: { organizer: userToDelete._id } }
+        { $pull: { organizer: userToDelete._id } },
+        { session }
       ),
 
       Order.updateMany(
         { _id: { $in: userToDelete.orders } },
-        { $unset: { buyer: 1 } }
+        { $unset: { buyer: 1 } },
+        { session }
       ),
     ]);
 
-    const deletedUser = await User.findByIdAndDelete(userToDelete._id);
+    const deletedUser = await User.findByIdAndDelete(userToDelete._id).session(
+      session
+    );
+
+    await session.commitTransaction();
+    session.endSession();
+
     revalidatePath("/");
 
     return deletedUser ? JSON.parse(JSON.stringify(deletedUser)) : null;
   } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
     handleError(error);
   }
 }

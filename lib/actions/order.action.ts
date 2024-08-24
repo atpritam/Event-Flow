@@ -14,6 +14,7 @@ import Order from "../database/models/order.model";
 import Event from "../database/models/event.model";
 import { ObjectId } from "mongodb";
 import User from "../database/models/user.model";
+import { isValidObjectId } from "mongoose";
 
 export const checkoutOrder = async (order: CheckoutOrderParams) => {
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
@@ -185,10 +186,11 @@ export async function getOrderByID(orderId: string) {
 
 export const markOrderAsUsed = async (orderId: string, userId: string) => {
   try {
-    await connectToDatabase();
+    if (!isValidObjectId(userId) || !isValidObjectId(orderId)) {
+      throw new Error("Invalid ID");
+    }
 
-    if (!orderId || !userId)
-      throw new Error("Order ID and User ID are required");
+    await connectToDatabase();
 
     const order = await Order.findById(orderId).populate("event");
     if (!order) throw new Error("Order not found");
@@ -197,7 +199,7 @@ export const markOrderAsUsed = async (orderId: string, userId: string) => {
     if (!event) throw new Error("Event not found");
 
     // Authorization
-    if (event.organizer.toString() !== userId) {
+    if (event.organizer.toHexString() !== userId) {
       throw new Error("Unauthorized: User is not the organizer of the event");
     }
 
