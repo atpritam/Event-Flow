@@ -67,11 +67,20 @@ export const createOrder = async (order: CreateOrderParams) => {
 export async function getOrdersByEvent({
   searchString,
   eventId,
+  userId,
 }: GetOrdersByEventParams) {
   try {
+    if (!isValidObjectId(userId) || !isValidObjectId(eventId)) {
+      throw new Error("Invalid Input");
+    }
+
     await connectToDatabase();
 
-    if (!eventId) throw new Error("Event ID is required");
+    const event = await Event.findById(eventId).populate("organizer");
+    if (!event || event.organizer._id.toHexString() !== userId) {
+      throw new Error("Unauthorized or event not found");
+    }
+
     const eventObjectId = new ObjectId(eventId);
 
     const orders = await Order.aggregate([
