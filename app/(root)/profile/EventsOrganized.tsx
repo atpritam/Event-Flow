@@ -35,7 +35,7 @@ const EventsOrganized = ({
             {isUser && (
               <EventLink
                 href={`/orders/all`}
-                className="flex gap-2 border-2 px-4 py-2 rounded-md border-primary-500 group w-fit bg-violet-50 hover:bg-violet-100"
+                className="flex gap-2 border-2 px-4 py-2 rounded-md border-primary-500 group w-fit bg-white hover:bg-violet-100"
               >
                 <p className="text-primary-500">All Orders</p>
                 <Image
