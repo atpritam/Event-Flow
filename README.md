@@ -169,8 +169,6 @@ The app uses Mongoose for defining database schemas. Below are the key models:
 - **Category**: Used for categorizing events.
 - **Order**: This model tracks transactions, linking users to the events they've registered for. It also includes a field to record whether the tickets associated with a particular order have been marked as used, ensuring accurate tracking of ticket usage.
 
-Your text is well-organized and clear, with a strong focus on security and functionality. I've made minor adjustments to enhance readability and ensure consistency.
-
 ## Server Actions
 
 The app uses server actions in Next.js, defined with `use server`, to interact with the MongoDB database. These server-side actions handle data fetching and manipulation while enforcing robust security measures to ensure data integrity and user authorization.
