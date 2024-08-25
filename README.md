@@ -57,6 +57,7 @@ This Events application is built using Next.js. The app features a full-fledged 
 
 - Users have the ability to create, update, and delete events.
 - `Event organizers` can access detailed order information, including comprehensive ticket sales `analytics`. These insights are available through both `weekly` and `monthly` charts, as well as an interactive `orders table`, providing a clear overview of event performance.
+- Export Sales report as CSV, Excel, PDF, JSON.
 
 ![Orders-Sales](Images/Orders.png)
 
@@ -85,8 +86,6 @@ This Events application is built using Next.js. The app features a full-fledged 
 - **Shadcn UI**: Set of pre-built UI components.
 - **React Hook Form**: Library for flexible and efficient form handling.
 - **Zod**: TypeScript-first schema declaration and validation library.
-- **React DatePicker**: Flexible date picker component for React.
-- **React QR Code**: Library for generating QR codes in React applications.
 
 ## Installation
 
@@ -178,7 +177,7 @@ The app uses server actions in Next.js, defined with `use server`, to interact w
 
 ### Authorization Checks
 
-All server actions involving data modifications incorporate strict authorization checks. These checks verify that the user initiating the action has the necessary permissions.
+All server actions involving data modifications or retrieval of sensitive data incorporate strict authorization checks. These checks verify that the user initiating the action has the necessary permissions.
 
 **Example: Event Deletion**
 
