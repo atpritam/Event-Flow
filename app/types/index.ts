@@ -123,6 +123,15 @@ export type CreateOrderParams = {
   createdAt: Date;
 };
 
+// Assuming your ChartConfig is intended to configure chart-specific settings
+export type ChartConfig = {
+  title: string;
+  xAxisLabel: string;
+  yAxisLabel: string;
+  color?: string;
+  theme?: Record<"light" | "dark", string>;
+};
+
 export type GetOrdersByEventParams = {
   eventId: string;
   searchString: string;
