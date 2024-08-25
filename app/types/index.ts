@@ -123,7 +123,6 @@ export type CreateOrderParams = {
   createdAt: Date;
 };
 
-// Assuming your ChartConfig is intended to configure chart-specific settings
 export type ChartConfig = {
   title: string;
   xAxisLabel: string;
