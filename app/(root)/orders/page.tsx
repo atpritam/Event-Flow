@@ -3,13 +3,21 @@ import { SearchParamProps } from "@/app/types";
 import { getOrdersByEvent } from "@/lib/actions/order.action";
 import OrdersChart from "./OrdersChart";
 import ClientOrders from "./Orders";
+import { auth } from "@clerk/nextjs/server";
 
 const Orders = async ({ searchParams }: SearchParamProps) => {
+  const { sessionClaims } = auth();
+  const userId = sessionClaims?.userId as string;
   const eventId = (searchParams?.eventId as string) || "";
   const searchText = (searchParams?.query as string) || "";
-  const totalOrders = await getOrdersByEvent({ eventId, searchString: "" });
+  const totalOrders = await getOrdersByEvent({
+    eventId,
+    userId,
+    searchString: "",
+  });
   const orders = await getOrdersByEvent({
     eventId,
+    userId,
     searchString: searchText.trim(),
   });
 
