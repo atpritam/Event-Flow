@@ -36,7 +36,7 @@ This platform is **100% mobile responsive** and designed with a **mobile-first a
 
 ## Overview
 
-This Events application is built using Next.js. The app features a full-fledged event management system where users can create, view, manage and purchase tickets for events. The platform acts as a dynamic marketplace for events where users can discover and engage with events that interest them. Additionally, it integrates Stripe for payment processing and QR code scanning for secure ticket validation, offering a seamless experience for both event organizers and attendees.
+This Events application is built using Next.js. The app features a full-fledged event management system where users can create, view, manage and purchase tickets for events. The Platform integrates Stripe for payment processing and QR code scanning for secure ticket validation, offering a seamless experience for both event organizers and attendees. Additionally, event organizers have access to detailed analytics, including weekly and monthly sales charts and an interactive orders table, providing valuable insights into event performance.
 
 ## Table of Contents
 
@@ -167,7 +167,7 @@ The app uses Mongoose for defining database schemas. Below are the key models:
 - **User**: Manages user details including authentication via Clerk.
 - **Event**: Stores event details such as title, description, location, and organizer.
 - **Category**: Used for categorizing events.
-- **Order**: This model tracks transactions, linking users to the events they've registered for. It also includes a field to record whether the tickets associated with a particular order have been marked as used, ensuring accurate tracking of ticket usage.
+- **Order**: Captures transactions linking users to events they’ve registered for, including details like payment and ticket usage status.
 
 ## Server Actions
 
@@ -255,10 +255,6 @@ For event organizers, ticket validation is seamlessly integrated into their acco
      - **Usage Status**: Verifies whether the ticket has already been used.
 
 This robust validation process ensures that only legitimate tickets are accepted, offering peace of mind to organizers and attendees alike.
-
-![Ticket Validation](Images/Mark-As-Used.png)
-![Ticket Marked As Used](Images/Marked-Used.png)
-![Ticket Used Before](Images/Used-Before.png)
 
 ## File Uploads
 
