@@ -27,13 +27,16 @@ const EventsOrganized = ({
     <>
       <section className="bg-primary-50 bg-dotted-pattern bg-cover bg-center py-5 md:py-5">
         <div className="wrapper flex items-center justify-center sm:justify-between">
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-4 justify-center items-center sm:items-start">
             <h3 className="h3-bold text-center sm:text-left">
               Events Organized{!isUser && <span> by </span>}
               {userName}
             </h3>
             {isUser && (
-              <EventLink href={`/orders/all`} className="flex gap-2">
+              <EventLink
+                href={`/orders/all`}
+                className="flex gap-2 border-2 px-4 py-2 rounded-md border-primary-500 group w-fit bg-violet-50 hover:bg-violet-100"
+              >
                 <p className="text-primary-500">All Orders</p>
                 <Image
                   src="/assets/icons/arrow.svg"

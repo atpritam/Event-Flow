@@ -222,7 +222,7 @@ const OrdersChart = ({ orders }: { orders: IOrderItem[] }) => {
         </div>
         <ChartContainer
           config={chartConfig}
-          className="h-[200px] md:h-[350px] lg:h-[450px] w-full"
+          className="h-[300px] md:h-[350px] lg:h-[450px] w-full"
         >
           <BarChart data={chartData}>
             <CartesianGrid vertical={false} />

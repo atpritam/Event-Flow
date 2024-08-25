@@ -1,8 +1,6 @@
 "use client";
 
 import React from "react";
-import * as XLSX from "xlsx";
-import Link from "next/link";
 import {
   Table,
   TableBody,
@@ -35,6 +33,12 @@ import { IOrderItem } from "@/lib/database/models/order.model";
 import Search from "@/components/shared/Search";
 import ClientRender from "@/components/shared/ClientRender";
 import EventLink from "@/components/shared/EventLink";
+import {
+  exportToCSV,
+  exportToExcel,
+  exportToPDF,
+  exportToJSON,
+} from "@/lib/utils";
 
 export function OrdersDataTable({
   orders,
@@ -50,7 +54,7 @@ export function OrdersDataTable({
   const [columnVisibility, setColumnVisibility] = React.useState<
     Record<string, boolean>
   >({
-    "Event Title": false,
+    eventTitle: titleClickable,
   });
 
   const columns: ColumnDef<IOrderItem>[] = [
@@ -96,55 +100,6 @@ export function OrdersDataTable({
     },
   ];
 
-  function exportToCSV(data: IOrderItem[]) {
-    const header = columns.map((col) => col.header ?? "");
-    const rows = data.map((row) =>
-      columns.map((col) => {
-        //@ts-ignore
-        const key = col.accessorKey as keyof IOrderItem;
-        const value = row[key];
-
-        if (key === "createdAt") {
-          return formatDateTime(value as Date).dateOnly;
-        }
-
-        return value;
-      })
-    );
-
-    const csvContent = [
-      header.join(","),
-      ...rows.map((row) => row.join(",")),
-    ].join("\n");
-
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.setAttribute("href", url);
-    link.setAttribute("download", "orders.csv");
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  }
-
-  function exportToExcel(data: IOrderItem[]) {
-    const formattedData = data.map((row) => {
-      const formattedRow: any = { ...row };
-      formattedRow.createdAt = formatDateTime(
-        formattedRow.createdAt as Date
-      ).dateOnly;
-      return formattedRow;
-    });
-
-    const worksheet = XLSX.utils.json_to_sheet(formattedData, {
-      //@ts-ignore
-      header: columns.map((col) => col.accessorKey ?? ""),
-    });
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Orders");
-    XLSX.writeFile(workbook, "orders.xlsx");
-  }
-
   const table = useReactTable({
     data: orders,
     columns,
@@ -179,11 +134,17 @@ export function OrdersDataTable({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => exportToCSV(orders)}>
+              <DropdownMenuItem onClick={() => exportToCSV(orders, columns)}>
                 CSV
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => exportToExcel(orders)}>
+              <DropdownMenuItem onClick={() => exportToExcel(orders, columns)}>
                 Excel
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => exportToPDF(orders, columns)}>
+                PDF
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => exportToJSON(orders)}>
+                JSON
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
