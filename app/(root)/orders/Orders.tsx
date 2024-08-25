@@ -34,6 +34,7 @@ import { formatDateTime, formatPrice } from "@/lib/utils";
 import { IOrderItem } from "@/lib/database/models/order.model";
 import Search from "@/components/shared/Search";
 import ClientRender from "@/components/shared/ClientRender";
+import EventLink from "@/components/shared/EventLink";
 
 export function OrdersDataTable({
   orders,
@@ -67,12 +68,12 @@ export function OrdersDataTable({
         const eventTitle = row.original.eventTitle;
         const eventId = row.original.eventId;
         return titleClickable ? (
-          <Link
+          <EventLink
             href={`${window.location.origin}/orders?eventId=${eventId}`}
             className="text-blue-600 hover:underline"
           >
             {eventTitle}
-          </Link>
+          </EventLink>
         ) : (
           <div>{eventTitle}</div>
         );
