@@ -6,6 +6,7 @@ import { Plus } from "lucide-react";
 import Link from "next/link";
 import React, { Suspense, use } from "react";
 import Image from "next/image";
+import EventLink from "@/components/shared/EventLink";
 
 interface EventsOrganizedProps {
   organizedEventsPromise: Promise<{ data: IEvent[]; totalPages: number }>;
@@ -32,7 +33,7 @@ const EventsOrganized = ({
               {userName}
             </h3>
             {isUser && (
-              <Link href={`/orders/all`} className="flex gap-2">
+              <EventLink href={`/orders/all`} className="flex gap-2">
                 <p className="text-primary-500">All Orders</p>
                 <Image
                   src="/assets/icons/arrow.svg"
@@ -41,7 +42,7 @@ const EventsOrganized = ({
                   height={10}
                   className="transform group-hover:translate-x-[3px] transition-all ease-out duration-150"
                 />
-              </Link>
+              </EventLink>
             )}
           </div>
           {isUser && (
