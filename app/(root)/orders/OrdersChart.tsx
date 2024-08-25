@@ -242,6 +242,22 @@ const OrdersChart = ({ orders }: { orders: IOrderItem[] }) => {
           </BarChart>
         </ChartContainer>
       </div>
+      <div className="flex flex-col justify-center items-center gap-4">
+        <div className="bg-white w-40 h-16 rounded-lg shadow text-center sm:text-left flex justify-center items-center flex-col">
+          <p className="text-gray-600 flex justify-center items-center">
+            Total Sales
+          </p>
+          <span className="text-xl font-bold">&nbsp;{totalSales}</span>
+        </div>
+        <div className="bg-white w-40 h-16 rounded-lg shadow text-center sm:text-left flex justify-center items-center flex-col">
+          <p className="text-gray-600 flex justify-center items-center">
+            Total Amount
+          </p>
+          <span className="text-xl font-bold">
+            &nbsp;{formatPrice(totalAmount.toString())}
+          </span>
+        </div>
+      </div>
     </div>
   );
 };
