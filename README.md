@@ -197,6 +197,12 @@ export async function deleteEvent({
       throw new Error("Invalid input");
     }
 
+    const { sessionClaims } = auth();
+    const sessionUser = sessionClaims?.userId as string;
+    if (userId !== sessionUser) {
+      throw new Error("Unauthorized");
+    }
+
     await connectToDatabase();
 
     const event = await Event.findById(eventId).populate("organizer");
@@ -215,8 +221,8 @@ export async function deleteEvent({
 In this `deleteEvent` action:
 
 1. Input Validation: The function first validates inputs to ensure `userId` and `eventId` are valid MongoDB Object IDs and path is a string. This prevents invalid data from causing errors or security issues.
-2. Database Connection: It then connects to the database.
-3. Authorization Check: The function fetches the event and checks whether the `userId` matches the event organizer’s ID. If not, it throws an "Unauthorized or event not found" error.
+2. Authorization Check: It retrieves the current user’s ID from the session claims and verifies it against the provided userId. If they don’t match, an "Unauthorized" error is thrown. Additionally, it ensures that the event being deleted is associated with the correct organizer by comparing the userId with the event organizer’s ID.
+3. Database Connection: The function establishes a connection to the database before performing any operations.
 4. Event Deletion: If the user is authorized, the event is deleted. After successful deletion, it calls `revalidatePath` to maintain UI consistency.
 5. Error Handling: Errors are caught and handled by `handleError`, ensuring that any issues are logged or managed appropriately.
 

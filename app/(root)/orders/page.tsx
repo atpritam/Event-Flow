@@ -4,6 +4,7 @@ import { getOrdersByEvent } from "@/lib/actions/order.action";
 import OrdersChart from "./OrdersChart";
 import ClientOrders from "./Orders";
 import { auth } from "@clerk/nextjs/server";
+import { getEventById } from "@/lib/actions/event.actions";
 
 const Orders = async ({ searchParams }: SearchParamProps) => {
   const { sessionClaims } = auth();
@@ -26,7 +27,9 @@ const Orders = async ({ searchParams }: SearchParamProps) => {
       <section className="bg-primary-50 bg-dotted-pattern bg-cover bg-center py-5 md:py-10">
         <h3 className="wrapper h3-bold text-center sm:text-left">Orders</h3>
         <h4 className="wrapper text-center sm:text-left mt-[-20px]">
-          {orders[0].eventTitle}
+          {orders[0]
+            ? orders[0]?.eventTitle || null
+            : await getEventById(eventId).then((event) => event.title)}
         </h4>
       </section>
       <OrdersChart orders={totalOrders} />

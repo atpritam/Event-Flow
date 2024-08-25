@@ -15,6 +15,7 @@ import Event from "../database/models/event.model";
 import User from "../database/models/user.model";
 import Category from "../database/models/category.model";
 import { isValidObjectId } from "mongoose";
+import { auth } from "@clerk/nextjs/server";
 
 const getCategoryByName = async (name: string) => {
   return Category.findOne({ name: { $regex: name, $options: "i" } });
@@ -119,6 +120,12 @@ export async function deleteEvent({
       throw new Error("Invalid input");
     }
 
+    const { sessionClaims } = auth();
+    const sessionUser = sessionClaims?.userId as string;
+    if (userId !== sessionUser) {
+      throw new Error("Unauthorized");
+    }
+
     await connectToDatabase();
 
     const event = await Event.findById(eventId).populate("organizer");
@@ -142,6 +149,12 @@ export async function updateEvent({ userId, event, path }: UpdateEventParams) {
       typeof path !== "string"
     ) {
       throw new Error("Invalid input");
+    }
+
+    const { sessionClaims } = auth();
+    const sessionUser = sessionClaims?.userId as string;
+    if (userId !== sessionUser) {
+      throw new Error("Unauthorized");
     }
 
     await connectToDatabase();

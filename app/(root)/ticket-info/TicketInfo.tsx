@@ -152,7 +152,7 @@ const TicketInfo = () => {
         throw new Error("Order ID is not available.");
       }
 
-      const order = await getOrderByID(orderId);
+      const order = await getOrderByID(orderId, userId);
       if (!order) {
         throw new Error("Order not found.");
       }

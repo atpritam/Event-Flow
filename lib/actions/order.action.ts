@@ -15,6 +15,7 @@ import Event from "../database/models/event.model";
 import { ObjectId } from "mongodb";
 import User from "../database/models/user.model";
 import { isValidObjectId } from "mongoose";
+import { auth } from "@clerk/nextjs/server";
 
 export const checkoutOrder = async (order: CheckoutOrderParams) => {
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
@@ -72,6 +73,13 @@ export async function getOrdersByEvent({
   try {
     if (!isValidObjectId(userId) || !isValidObjectId(eventId)) {
       throw new Error("Invalid Input");
+    }
+
+    const { sessionClaims } = auth();
+    const user = sessionClaims?.userId as string;
+
+    if (userId !== user) {
+      throw new Error("Unauthorized");
     }
 
     await connectToDatabase();
@@ -134,6 +142,90 @@ export async function getOrdersByEvent({
   }
 }
 
+interface GetAllOrdersParams {
+  searchString: string;
+  userId: string;
+}
+
+export async function getAllOrdersByUser({
+  searchString,
+  userId,
+}: GetAllOrdersParams) {
+  try {
+    if (!isValidObjectId(userId)) {
+      throw new Error("Invalid Input");
+    }
+
+    const { sessionClaims } = auth();
+    const user = sessionClaims?.userId as string;
+
+    if (userId !== user) {
+      throw new Error("Unauthorized");
+    }
+
+    await connectToDatabase();
+
+    const userEvents = await Event.find({ organizer: userId }).select("_id");
+
+    const eventIds = userEvents.map((event) => event._id);
+
+    if (eventIds.length === 0) {
+      return [];
+    }
+
+    const orders = await Order.aggregate([
+      {
+        $match: {
+          event: { $in: eventIds },
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "buyer",
+          foreignField: "_id",
+          as: "buyer",
+        },
+      },
+      {
+        $unwind: "$buyer",
+      },
+      {
+        $lookup: {
+          from: "events",
+          localField: "event",
+          foreignField: "_id",
+          as: "event",
+        },
+      },
+      {
+        $unwind: "$event",
+      },
+      {
+        $project: {
+          _id: 1,
+          totalAmount: 1,
+          createdAt: 1,
+          eventTitle: "$event.title",
+          eventId: "$event._id",
+          buyer: {
+            $concat: ["$buyer.firstName", " ", "$buyer.lastName"],
+          },
+        },
+      },
+      {
+        $match: {
+          buyer: { $regex: RegExp(searchString, "i") },
+        },
+      },
+    ]);
+
+    return JSON.parse(JSON.stringify(orders));
+  } catch (error) {
+    handleError(error);
+  }
+}
+
 export async function getOrdersByUser({
   userId,
   limit = 3,
@@ -173,11 +265,18 @@ export async function getOrdersByUser({
   }
 }
 
-export async function getOrderByID(orderId: string) {
+export async function getOrderByID(orderId: string, userId: string) {
   try {
-    await connectToDatabase();
+    if (!isValidObjectId(userId) || !isValidObjectId(orderId)) {
+      throw new Error("Invalid ID");
+    }
+    const { sessionClaims } = auth();
+    const user = sessionClaims?.userId as string;
+    if (userId !== user) {
+      throw new Error("Unauthorized");
+    }
 
-    if (!orderId) throw new Error("Order ID is required");
+    await connectToDatabase();
 
     const order = await Order.findById(orderId)
       .populate({ path: "event", model: Event })
@@ -185,6 +284,10 @@ export async function getOrderByID(orderId: string) {
 
     if (!order) {
       throw new Error("Order not found");
+    }
+
+    if (order?.event.organizer.toHexString() !== userId) {
+      throw new Error("Unauthorized: User is not the organizer of the event");
     }
 
     return JSON.parse(JSON.stringify(order));
@@ -197,6 +300,12 @@ export const markOrderAsUsed = async (orderId: string, userId: string) => {
   try {
     if (!isValidObjectId(userId) || !isValidObjectId(orderId)) {
       throw new Error("Invalid ID");
+    }
+
+    const { sessionClaims } = auth();
+    const user = sessionClaims?.userId as string;
+    if (userId !== user) {
+      throw new Error("Unauthorized");
     }
 
     await connectToDatabase();

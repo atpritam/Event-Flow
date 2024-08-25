@@ -5,6 +5,7 @@ import { IEvent } from "@/lib/database/models/event.model";
 import { Plus } from "lucide-react";
 import Link from "next/link";
 import React, { Suspense, use } from "react";
+import Image from "next/image";
 
 interface EventsOrganizedProps {
   organizedEventsPromise: Promise<{ data: IEvent[]; totalPages: number }>;
@@ -25,10 +26,24 @@ const EventsOrganized = ({
     <>
       <section className="bg-primary-50 bg-dotted-pattern bg-cover bg-center py-5 md:py-5">
         <div className="wrapper flex items-center justify-center sm:justify-between">
-          <h3 className="h3-bold text-center sm:text-left">
-            Events Organized{!isUser && <span> by </span>}
-            {userName}
-          </h3>
+          <div className="flex flex-col gap-4">
+            <h3 className="h3-bold text-center sm:text-left">
+              Events Organized{!isUser && <span> by </span>}
+              {userName}
+            </h3>
+            {isUser && (
+              <Link href={`/orders/all`} className="flex gap-2">
+                <p className="text-primary-500">All Orders</p>
+                <Image
+                  src="/assets/icons/arrow.svg"
+                  alt="arrow"
+                  width={10}
+                  height={10}
+                  className="transform group-hover:translate-x-[3px] transition-all ease-out duration-150"
+                />
+              </Link>
+            )}
+          </div>
           {isUser && (
             <Button asChild className="button hidden sm:flex">
               <Link href="/events/create">

@@ -7,8 +7,8 @@ import Order from "@/lib/database/models/order.model";
 import Event from "@/lib/database/models/event.model";
 import { revalidatePath } from "next/cache";
 import { CreateUserParams, UpdateUserParams } from "@/app/types";
-import mongoose from "mongoose";
-
+import mongoose, { isValidObjectId } from "mongoose";
+import { auth } from "@clerk/nextjs/server";
 export const createUser = async (user: CreateUserParams) => {
   try {
     await connectToDatabase();
@@ -21,25 +21,18 @@ export const createUser = async (user: CreateUserParams) => {
   }
 };
 
-export const getUserIDByClerkId = async (clerkId: string) => {
-  try {
-    await connectToDatabase();
-
-    const user = await User.findOne({ clerkId });
-
-    if (!user) {
-      throw new Error("User not found");
-    }
-
-    return user._id.toString();
-  } catch (error) {
-    console.error("Error fetching user by Clerk ID:", error);
-    throw new Error("Failed to retrieve user ID");
-  }
-};
-
 export async function getUserById(userId: string) {
   try {
+    if (!isValidObjectId(userId)) {
+      throw new Error("Invalid ID");
+    }
+
+    const { sessionClaims } = auth();
+    const sessionUser = sessionClaims?.userId as string;
+    if (userId !== sessionUser) {
+      throw new Error("Unauthorized");
+    }
+
     await connectToDatabase();
 
     const user = await User.findById(userId);
@@ -53,6 +46,16 @@ export async function getUserById(userId: string) {
 
 export async function updateUser(clerkId: string, user: UpdateUserParams) {
   try {
+    if (!isValidObjectId(clerkId)) {
+      throw new Error("Invalid ID");
+    }
+
+    const { sessionClaims } = auth();
+    const sessionUser = sessionClaims?.userId as string;
+    if (clerkId !== sessionUser) {
+      throw new Error("Unauthorized");
+    }
+
     await connectToDatabase();
 
     const updatedUser = await User.findOneAndUpdate({ clerkId }, user, {
@@ -71,6 +74,16 @@ export async function deleteUser(clerkId: string) {
   session.startTransaction();
 
   try {
+    if (!isValidObjectId(clerkId)) {
+      throw new Error("Invalid ID");
+    }
+
+    const { sessionClaims } = auth();
+    const sessionUser = sessionClaims?.userId as string;
+    if (clerkId !== sessionUser) {
+      throw new Error("Unauthorized");
+    }
+
     await connectToDatabase();
 
     const userToDelete = await User.findOne({ clerkId }).session(session);
