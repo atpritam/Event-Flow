@@ -1,7 +1,14 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
+import {
+  Bar,
+  CartesianGrid,
+  XAxis,
+  YAxis,
+  Line,
+  ComposedChart,
+} from "recharts";
 import {
   Calendar,
   BarChart as BarChartIcon,
@@ -97,7 +104,7 @@ const OrdersChart = ({ orders }: { orders: IOrderItem[] }) => {
     weekStart.setDate(now.getDate() - 6);
     const monthsAgo = new Date(
       now.getFullYear(),
-      now.getMonth() - (screenSize === "lg" ? 11 : 5),
+      now.getMonth() - (screenSize === "lg" ? 11 : 11),
       1
     );
 
@@ -144,7 +151,7 @@ const OrdersChart = ({ orders }: { orders: IOrderItem[] }) => {
 
   const chartConfig: ChartConfig = {
     Sales: { label: "Sales", color: "#2563eb" },
-    Amount: { label: "Amount", color: "#60a5fa" },
+    Amount: { label: "Amount", color: "#16a2ea" },
   };
 
   const navigateWeek = (direction: "prev" | "next") => {
@@ -224,7 +231,7 @@ const OrdersChart = ({ orders }: { orders: IOrderItem[] }) => {
           config={chartConfig}
           className="h-[300px] md:h-[350px] lg:h-[450px] w-full"
         >
-          <BarChart data={chartData}>
+          <ComposedChart data={chartData}>
             <CartesianGrid vertical={false} />
             <XAxis
               dataKey="period"
@@ -233,15 +240,32 @@ const OrdersChart = ({ orders }: { orders: IOrderItem[] }) => {
               axisLine={false}
               tickFormatter={(value) => value.slice(0, 3)}
             />
+            <YAxis yAxisId="left" orientation="left" />
+            <YAxis yAxisId="left" orientation="left" />
+            <YAxis
+              yAxisId="right"
+              orientation="right"
+              tickFormatter={(value) => `$${value.toFixed(0)}`}
+            />
             <ChartTooltip
               content={<ChartTooltipContent />}
               //@ts-ignore
               className="bg-white"
             />
             <ChartLegend content={<ChartLegendContent />} />
-            <Bar dataKey="Sales" fill="var(--color-Sales)" radius={4} />
-            <Bar dataKey="Amount" fill="var(--color-Amount)" radius={4} />
-          </BarChart>
+            <Bar
+              dataKey="Sales"
+              fill="var(--color-Sales)"
+              radius={4}
+              yAxisId="left"
+            />
+            <Line
+              dataKey="Amount"
+              stroke="var(--color-Amount)"
+              dot={false}
+              yAxisId="right"
+            />
+          </ComposedChart>
         </ChartContainer>
       </div>
       <div className="flex flex-col justify-center items-center gap-4">

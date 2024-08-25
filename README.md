@@ -56,7 +56,7 @@ This Events application is built using Next.js. The app features a full-fledged 
 ### Event Management
 
 - Users have the ability to create, update, and delete events.
-- `Event organizers` can access detailed order information, including comprehensive ticket sales `analytics`. These insights are available through both `weekly` and `monthly` charts, as well as an interactive `orders table`, providing a clear overview of event performance.
+- Event organizers can easily view detailed order information for individual events or all orders, including comprehensive ticket sales `analytics`. Access insights through interactive `weekly` and `monthly` charts, as well as a detailed orders table, for a complete overview of event performance.
 - Export Sales report as CSV, Excel, PDF, JSON.
 
 ![Orders-Sales](Images/Orders.png)
