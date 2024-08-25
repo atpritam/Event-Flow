@@ -123,14 +123,6 @@ export type CreateOrderParams = {
   createdAt: Date;
 };
 
-export type ChartConfig = {
-  title: string;
-  xAxisLabel: string;
-  yAxisLabel: string;
-  color?: string;
-  theme?: Record<"light" | "dark", string>;
-};
-
 export type GetOrdersByEventParams = {
   eventId: string;
   searchString: string;
