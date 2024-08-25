@@ -37,7 +37,6 @@ const OrdersChart = ({ orders }: { orders: IOrderItem[] }) => {
   const [view, setView] = useState<"week" | "month">("month");
   const [currentWeekStart, setCurrentWeekStart] = useState(() => {
     const now = new Date();
-    // Initialize to the start of the current week (Sunday or Monday depending on locale)
     const startOfWeek = new Date(now);
     startOfWeek.setDate(
       now.getDate() - now.getDay() + (now.getDay() === 0 ? -6 : 0)
@@ -47,7 +46,6 @@ const OrdersChart = ({ orders }: { orders: IOrderItem[] }) => {
   });
   const screenSize = useScreenSize();
 
-  // Calculate the limits for navigation
   const now = new Date();
   const startOfCurrentWeek = new Date(now);
   startOfCurrentWeek.setDate(
@@ -115,7 +113,6 @@ const OrdersChart = ({ orders }: { orders: IOrderItem[] }) => {
       const orderDate = new Date(order.createdAt);
 
       if (view === "week") {
-        // Only include orders within the current week range
         if (
           orderDate >= currentWeekStart &&
           orderDate <
@@ -123,7 +120,7 @@ const OrdersChart = ({ orders }: { orders: IOrderItem[] }) => {
         ) {
           key = orderDate.toLocaleDateString("default", { weekday: "short" });
         } else {
-          return acc; // Skip this order if it's not in the current week
+          return acc;
         }
       } else {
         key = getMonthYear(order.createdAt.toString());
@@ -244,22 +241,6 @@ const OrdersChart = ({ orders }: { orders: IOrderItem[] }) => {
             <Bar dataKey="Amount" fill="var(--color-Amount)" radius={4} />
           </BarChart>
         </ChartContainer>
-      </div>
-      <div className="flex flex-col justify-center items-center gap-4">
-        <div className="bg-white w-40 h-16 rounded-lg shadow text-center sm:text-left flex justify-center items-center flex-col">
-          <p className="text-gray-600 flex justify-center items-center">
-            Total Sales
-          </p>
-          <span className="text-xl font-bold">&nbsp;{totalSales}</span>
-        </div>
-        <div className="bg-white w-40 h-16 rounded-lg shadow text-center sm:text-left flex justify-center items-center flex-col">
-          <p className="text-gray-600 flex justify-center items-center">
-            Total Amount
-          </p>
-          <span className="text-xl font-bold">
-            &nbsp;{formatPrice(totalAmount.toString())}
-          </span>
-        </div>
       </div>
     </div>
   );
