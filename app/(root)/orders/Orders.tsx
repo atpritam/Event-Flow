@@ -39,6 +39,7 @@ import {
   exportToPDF,
   exportToJSON,
 } from "@/lib/utils";
+import { ArrowUpDown } from "lucide-react";
 
 export function OrdersDataTable({
   orders,
@@ -47,7 +48,9 @@ export function OrdersDataTable({
   orders: IOrderItem[];
   titleClickable: boolean;
 }) {
-  const [sorting, setSorting] = React.useState<SortingState>([]);
+  const [sorting, setSorting] = React.useState<SortingState>([
+    { id: "createdAt", desc: true },
+  ]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
@@ -90,12 +93,32 @@ export function OrdersDataTable({
     },
     {
       accessorKey: "createdAt",
-      header: "Created",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Created
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        );
+      },
       cell: ({ row }) => formatDateTime(row.original.createdAt).dateTime,
     },
     {
       accessorKey: "totalAmount",
-      header: "Amount",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Amount
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        );
+      },
       cell: ({ row }) => formatPrice(row.original.totalAmount),
     },
   ];
