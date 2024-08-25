@@ -222,11 +222,11 @@ In this `deleteEvent` action:
 
 ### Implementation Across the Application
 
-This pattern is consistently applied across all server actions involving data modification, including but not limited to:
+This pattern is consistently applied across all server actions involving data modification or retrieval of sensitive information, including but not limited to:
 
 - Creating and updating events
 - Processing orders
-- Marking tickets as used, as detailed in the Event Ticket Overview section below.
+- Order Sales Analytics
 
 By implementing these security measures at the server action level, the app provides a secure and robust foundation for data management.
 
