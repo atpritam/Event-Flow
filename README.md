@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="Event-Flow.gif" alt="Event Flow GIF" style="width: 100%; height: auto;">
+  <img src="Images/Event-Flow.gif" alt="Event Flow GIF" style="width: 100%; height: auto;">
 </p>
 
 # Event Flow
@@ -58,7 +58,7 @@ This Events application is built using Next.js. The app features a full-fledged 
 - Users have the ability to create, update, and delete events.
 - `Event organizers` can access detailed order information, including comprehensive ticket sales `analytics`. These insights are available through both `weekly` and `monthly` charts, as well as an interactive `orders table`, providing a clear overview of event performance.
 
-![Orders-Sales](Orders.png)
+![Orders-Sales](Images/Orders.png)
 
 ### Ticket Purchase and Validation
 
@@ -234,7 +234,7 @@ By implementing these security measures at the server action level, the app prov
 
 Event tickets are designed for both user convenience and security, featuring unique QR codes for seamless scanning and validation.
 
-![Event Ticket with QR Code](Event-Ticket.png)
+![Event Ticket with QR Code](Images/Event-Ticket.png)
 
 ### Ticket Validation Process
 
@@ -253,9 +253,9 @@ For event organizers, ticket validation is seamlessly integrated into their acco
 
 This robust validation process ensures that only legitimate tickets are accepted, offering peace of mind to organizers and attendees alike.
 
-![Ticket Validation](Mark-As-Used.png)
-![Ticket Marked As Used](Marked-Used.png)
-![Ticket Used Before](Used-Before.png)
+![Ticket Validation](Images/Mark-As-Used.png)
+![Ticket Marked As Used](Images/Marked-Used.png)
+![Ticket Used Before](Images/Used-Before.png)
 
 ## File Uploads
 
