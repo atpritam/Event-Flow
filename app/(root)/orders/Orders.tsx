@@ -30,6 +30,7 @@ import {
 import { formatDateTime, formatPrice } from "@/lib/utils";
 import { IOrderItem } from "@/lib/database/models/order.model";
 import Search from "@/components/shared/Search";
+import ClientRender from "@/components/shared/ClientRender";
 
 const columns: ColumnDef<IOrderItem>[] = [
   {
@@ -201,10 +202,10 @@ export function OrdersDataTable({ orders }: { orders: IOrderItem[] }) {
 
 export default function ClientOrders({ orders }: { orders: IOrderItem[] }) {
   return (
-    <>
+    <ClientRender>
       <section className="wrapper mt-4">
         <OrdersDataTable orders={orders} />
       </section>
-    </>
+    </ClientRender>
   );
 }

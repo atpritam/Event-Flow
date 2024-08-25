@@ -15,6 +15,7 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Button } from "@/components/ui/button";
 import { IOrderItem } from "@/lib/database/models/order.model";
 import { formatPrice } from "@/lib/utils";
+import ClientRender from "@/components/shared/ClientRender";
 
 const useScreenSize = () => {
   const [screenSize, setScreenSize] = useState<string>("lg");
@@ -207,6 +208,7 @@ const OrdersChart = ({ orders }: { orders: IOrderItem[] }) => {
                   ).toLocaleDateString()}
                 </span>
               </span>
+
               <Button
                 onClick={() => navigateWeek("next")}
                 size="icon"
@@ -262,4 +264,12 @@ const OrdersChart = ({ orders }: { orders: IOrderItem[] }) => {
   );
 };
 
-export default OrdersChart;
+export default function OrdersChartWrapper(props: {
+  orders: IOrderItem[];
+}): JSX.Element {
+  return (
+    <ClientRender>
+      <OrdersChart {...props} />
+    </ClientRender>
+  );
+}
