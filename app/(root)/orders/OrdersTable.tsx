@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { Suspense, use } from "react";
 import {
   Table,
   TableBody,
@@ -40,14 +40,16 @@ import {
   exportToJSON,
 } from "@/lib/utils";
 import { ArrowUpDown } from "lucide-react";
+import Loader from "@/components/shared/Loader";
 
 export function OrdersDataTable({
-  orders,
+  ordersPromise,
   titleClickable = false,
 }: {
-  orders: IOrderItem[];
+  ordersPromise: Promise<IOrderItem[]>;
   titleClickable: boolean;
 }) {
+  const orders = use(ordersPromise);
   const [sorting, setSorting] = React.useState<SortingState>([
     { id: "createdAt", desc: true },
   ]);
@@ -271,20 +273,22 @@ export function OrdersDataTable({
 }
 
 export default function OrdersTable({
-  orders,
+  ordersPromise,
   titleClickable,
 }: {
-  orders: IOrderItem[];
+  ordersPromise: Promise<IOrderItem[]>;
   titleClickable?: boolean;
 }) {
   return (
-    <ClientRender>
-      <section className="wrapper mt-4">
-        <OrdersDataTable
-          orders={orders}
-          titleClickable={titleClickable || false}
-        />
-      </section>
-    </ClientRender>
+    <Suspense fallback={<Loader />}>
+      <ClientRender>
+        <section className="wrapper mt-4">
+          <OrdersDataTable
+            ordersPromise={ordersPromise}
+            titleClickable={titleClickable || false}
+          />
+        </section>
+      </ClientRender>
+    </Suspense>
   );
 }

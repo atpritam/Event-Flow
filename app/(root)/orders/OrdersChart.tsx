@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, use, Suspense } from "react";
 import {
   Bar,
   CartesianGrid,
@@ -23,6 +23,7 @@ import { Button } from "@/components/ui/button";
 import { IOrderItem } from "@/lib/database/models/order.model";
 import { formatPrice } from "@/lib/utils";
 import ClientRender from "@/components/shared/ClientRender";
+import Loader from "@/components/shared/Loader";
 
 const useScreenSize = () => {
   const [screenSize, setScreenSize] = useState<string>("lg");
@@ -41,7 +42,12 @@ const useScreenSize = () => {
   return screenSize;
 };
 
-const OrdersChart = ({ orders }: { orders: IOrderItem[] }) => {
+const OrdersChart = ({
+  ordersPromise,
+}: {
+  ordersPromise: Promise<IOrderItem[]>;
+}) => {
+  const orders = use(ordersPromise);
   const [view, setView] = useState<"week" | "month">("month");
   const [currentWeekStart, setCurrentWeekStart] = useState(() => {
     const now = new Date();
@@ -289,11 +295,13 @@ const OrdersChart = ({ orders }: { orders: IOrderItem[] }) => {
 };
 
 export default function OrdersChartWrapper(props: {
-  orders: IOrderItem[];
+  ordersPromise: Promise<IOrderItem[]>;
 }): JSX.Element {
   return (
-    <ClientRender>
-      <OrdersChart {...props} />
-    </ClientRender>
+    <Suspense fallback={<Loader />}>
+      <ClientRender>
+        <OrdersChart {...props} />
+      </ClientRender>
+    </Suspense>
   );
 }
