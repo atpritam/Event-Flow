@@ -42,14 +42,15 @@ This Events application is built using Next.js. The app features a full-fledged 
 
 1. [Features](#features)
 2. [Technologies](#technologies)
-3. [Installation](#installation)
-4. [Environment Variables](#environment-variables)
-5. [Database Models](#database-models)
-6. [Server Actions](#server-actions)
-7. [Event Ticket Overview](#event-ticket-overview)
-8. [File Uploads](#file-uploads)
-9. [Contributing](#contributing)
-10. [License](#license)
+3. [Usage](#usage)
+4. [Installation](#installation)
+5. [Environment Variables](#environment-variables)
+6. [Database Models](#database-models)
+7. [Server Actions](#server-actions)
+8. [Event Ticket Overview](#event-ticket-overview)
+9. [File Uploads](#file-uploads)
+10. [Contributing](#contributing)
+11. [License](#license)
 
 ## Features
 
@@ -86,6 +87,99 @@ This Events application is built using Next.js. The app features a full-fledged 
 - **Shadcn UI**: Set of pre-built UI components.
 - **React Hook Form**: Library for flexible and efficient form handling.
 - **Zod**: TypeScript-first schema declaration and validation library.
+
+## Usage
+
+Here's how you can navigate and use the key features within the app:
+
+### Browsing Events
+
+- On the homepage, users can browse various events.
+- Events can be filtered by name or category for easier discovery.
+- Click on an event card to view more details about the specific event and related events.
+
+### Event Details
+
+- The event details page provides comprehensive information about the event.
+- Related events are suggested based on the current event's category.
+
+### Purchasing Tickets
+
+- Users need to log in to buy tickets for any event.
+- After selecting an event, follow the prompts to complete the purchase through secure Stripe integration.
+
+### User Authentication
+
+- Log in or sign up using the options in the header navigation bar.
+- On mobile devices, access these options through the hamburger menu on the top-right corner.
+
+### Creating an Event
+
+1. After logging in, access the "Create Event" option from the header nav bar or hamburger menu (mobile).
+2. Provide the following event details:
+   - Event title
+   - Description
+   - Category
+   - Event image
+   - Event location (online or physical venue)
+   - Start and end date/time
+   - Event URL
+3. Click the "Create Event" button to submit.
+4. Upon successful creation, you'll be directed to the newly created event's page.
+
+### Managing Events
+
+- As an event organizer, you can edit or delete your events using the respective buttons on the event page.
+- These options are available for events you've created, both on the event page and in your profile.
+
+### Organizer Pages
+
+- Clicking on an event organizer's name (displayed on event cards or event detail pages) will take you to the organizer's page.
+- Here, you can view all events organized by that particular organizer.
+
+### User Profile
+
+- Access your profile page through the header nav buttons.
+- On your profile, you can view:
+  - Tickets you've purchased
+  - Events you've organized
+- For events you've created:
+  - Use the edit/delete buttons to manage the events.
+  - Click the "Orders Details" button on event cards to view order/sales details and analytics for that specific event.
+- An "All Orders" button is available to see order/sales details and analytics for all events you've created.
+
+### Orders and Sales Analytics
+
+- On the analytics page, you'll find a chart displaying sales data:
+  - The line represents the amount/money earned.
+  - The bar represents the number of sales.
+- Switch between monthly and weekly views:
+  - Monthly view displays data for 12 months.
+  - Weekly view includes navigation buttons for previous/next week.
+- Below the chart, there's a detailed orders table where you can:
+  - Search for an order by buyer name.
+  - Sort orders by date placed (ascending/descending) or amount.
+  - Export data as CSV, Excel, PDF, or JSON.
+  - Filter displayed columns using the columns button.
+
+### Ticket Management
+
+For Event Attendees:
+
+- In the "My Tickets" section of your profile, you'll see event cards for purchased tickets.
+- Each card has a QR code button. Clicking this will display:
+  - The QR code for the ticket.
+  - An option to view and download the actual ticket.
+- Show this QR code to event organizers for entry validation.
+
+For Event Organizers:
+
+- When an attendee presents their QR code, scan it using your phone's camera or a QR code scanner.
+- This will redirect you to the ticket validation page within the Event Flow app.
+- The system performs robust server-side validation to check ticket validity.
+- You can manually mark tickets as used or set up auto-marking upon scanning.
+
+By following these steps, you can fully engage with the Event Flow platform, whether you're looking to attend events or organize your own.
 
 ## Installation
 
