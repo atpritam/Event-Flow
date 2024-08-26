@@ -285,26 +285,41 @@ export async function deleteEvent({
       !isValidObjectId(eventId) ||
       typeof path !== "string"
     ) {
-      throw new Error("Invalid input");
+      throw new Error("Invalid input parameters.");
     }
 
     const { sessionClaims } = auth();
     const sessionUser = sessionClaims?.userId as string;
+
+    // Check if the user is authorized
     if (userId !== sessionUser) {
-      throw new Error("Unauthorized");
+      throw new Error("User is not authorized to delete this event.");
     }
 
     await connectToDatabase();
 
     const event = await Event.findById(eventId).populate("organizer");
-    if (!event || event.organizer._id.toHexString() !== userId) {
-      throw new Error("Unauthorized or event not found");
+
+    // Check if the event exists and if the user is the organizer
+    if (!event) {
+      throw new Error("Event not found.");
+    }
+
+    if (event.organizer._id.toHexString() !== userId) {
+      throw new Error("User is not authorized to delete this event.");
     }
 
     const deletedEvent = await Event.findByIdAndDelete(eventId);
-    if (deletedEvent) revalidatePath(path);
+
+    if (deletedEvent) {
+      revalidatePath(path);
+      return { success: true, message: "Event deleted successfully." };
+    } else {
+      throw new Error("Failed to delete the event.");
+    }
   } catch (error) {
     handleError(error);
+    return { success: false, message: (error as Error).message };
   }
 }
 ```
@@ -314,7 +329,7 @@ In this `deleteEvent` action:
 1. Input Validation: The function first validates inputs to ensure `userId` and `eventId` are valid MongoDB Object IDs and path is a string. This prevents invalid data from causing errors or security issues.
 2. Authorization Check: It retrieves the current user’s ID from the session claims and verifies it against the provided userId. If they don’t match, an "Unauthorized" error is thrown. Additionally, it ensures that the event being deleted is associated with the correct organizer by comparing the userId with the event organizer’s ID.
 3. Database Connection: The function establishes a connection to the database before performing any operations.
-4. Event Deletion: If the user is authorized, the event is deleted. After successful deletion, it calls `revalidatePath` to maintain UI consistency.
+4. Event Deletion: If the user is authorized, the event is deleted. After successful deletion, it calls `revalidatePath` to maintain UI consistency and returns a success message.
 5. Error Handling: Errors are caught and handled by `handleError`, ensuring that any issues are logged or managed appropriately.
 
 ### Implementation Across the Application

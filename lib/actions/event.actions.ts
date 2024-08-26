@@ -141,26 +141,41 @@ export async function deleteEvent({
       !isValidObjectId(eventId) ||
       typeof path !== "string"
     ) {
-      throw new Error("Invalid input");
+      throw new Error("Invalid input parameters.");
     }
 
     const { sessionClaims } = auth();
     const sessionUser = sessionClaims?.userId as string;
+
+    // Check if the user is authorized
     if (userId !== sessionUser) {
-      throw new Error("Unauthorized");
+      throw new Error("User is not authorized to delete this event.");
     }
 
     await connectToDatabase();
 
     const event = await Event.findById(eventId).populate("organizer");
-    if (!event || event.organizer._id.toHexString() !== userId) {
-      throw new Error("Unauthorized or event not found");
+
+    // Check if the event exists and if the user is the organizer
+    if (!event) {
+      throw new Error("Event not found.");
+    }
+
+    if (event.organizer._id.toHexString() !== userId) {
+      throw new Error("User is not authorized to delete this event.");
     }
 
     const deletedEvent = await Event.findByIdAndDelete(eventId);
-    if (deletedEvent) revalidatePath(path);
+
+    if (deletedEvent) {
+      revalidatePath(path);
+      return { success: true, message: "Event deleted successfully." };
+    } else {
+      throw new Error("Failed to delete the event.");
+    }
   } catch (error) {
     handleError(error);
+    return { success: false, message: (error as Error).message };
   }
 }
 
