@@ -110,12 +110,11 @@ Here's how you can navigate and use the key features within the app:
 
 ### User Authentication
 
-- Log in or sign up using the options in the header navigation bar.
-- On mobile devices, access these options through the hamburger menu on the top-right corner.
+- Log in or sign up using the "Login" button in the header navigation bar.
 
 ### Creating an Event
 
-1. After logging in, access the "Create Event" option from the header nav bar or hamburger menu (mobile).
+1. After logging in, access the "Create Event" option from the header nav bar or hamburger menu in the top-right corner (mobile).
 2. Provide the following event details:
    - Event title
    - Description
