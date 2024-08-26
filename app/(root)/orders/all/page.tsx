@@ -4,6 +4,7 @@ import { getAllOrdersByUser } from "@/lib/actions/order.action";
 import OrdersChart from "../OrdersChart";
 import ClientOrders from "../OrdersTable";
 import { auth } from "@clerk/nextjs/server";
+import { IOrderItem } from "@/lib/database/models/order.model";
 
 const AllOrders = async ({ searchParams }: SearchParamProps) => {
   const { sessionClaims } = auth();
@@ -26,8 +27,13 @@ const AllOrders = async ({ searchParams }: SearchParamProps) => {
         <h3 className="wrapper h3-bold text-center sm:text-left">All Orders</h3>
       </section>
 
-      <OrdersChart ordersPromise={totalOrdersPromise} />
-      <ClientOrders ordersPromise={ordersPromise} titleClickable={true} />
+      <OrdersChart
+        ordersPromise={totalOrdersPromise as Promise<IOrderItem[]>}
+      />
+      <ClientOrders
+        ordersPromise={ordersPromise as Promise<IOrderItem[]>}
+        titleClickable={true}
+      />
     </div>
   );
 };
