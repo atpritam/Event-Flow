@@ -127,7 +127,7 @@ export async function getAllEvents({
  * @param {string} params.eventId - The ID of the event to delete.
  * @param {string} params.path - The path of the event.
  * @param {string} params.userId - The ID of the user deleting the event.
- * @returns {Promise<void>} - A promise that resolves when the event is deleted.
+ * @returns {Promise<{ success: boolean, message: string }>} The result of the delete operation.
  * @throws {Error} - If the input is invalid, unauthorized, or the event is not found.
  */
 export async function deleteEvent({
