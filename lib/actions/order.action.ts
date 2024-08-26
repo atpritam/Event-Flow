@@ -202,7 +202,7 @@ export async function getAllOrdersByUser({
     const eventIds = userEvents.map((event) => event._id);
 
     if (eventIds.length === 0) {
-      return [];
+      return [] as IOrderItem[];
     }
 
     const orders = await Order.aggregate([
@@ -252,7 +252,7 @@ export async function getAllOrdersByUser({
       },
     ]);
 
-    return JSON.parse(JSON.stringify(orders));
+    return JSON.parse(JSON.stringify(orders as IOrderItem[]));
   } catch (error) {
     handleError(error);
   }
