@@ -41,7 +41,6 @@ const useScreenSize = () => {
 
   return screenSize;
 };
-
 const OrdersChart = ({
   ordersPromise,
 }: {
@@ -102,24 +101,24 @@ const OrdersChart = ({
     return result;
   };
 
-  const getDisplayRange = (orders: IOrderItem[]) => {
-    if (orders.length === 0) return [];
-
+  const getDisplayRange = () => {
     const now = new Date();
-    const weekStart = new Date(now);
-    weekStart.setDate(now.getDate() - 6);
-    const monthsAgo = new Date(
-      now.getFullYear(),
-      now.getMonth() - (screenSize === "lg" ? 11 : 11),
-      1
-    );
-
-    return view === "week"
-      ? getDateRange(weekStart, now, "weekday")
-      : getDateRange(monthsAgo, now, "month");
+    if (view === "week") {
+      const weekStart = new Date(currentWeekStart);
+      const weekEnd = new Date(weekStart);
+      weekEnd.setDate(weekEnd.getDate() + 6);
+      return getDateRange(weekStart, weekEnd, "weekday");
+    } else {
+      const monthsAgo = new Date(
+        now.getFullYear(),
+        now.getMonth() - (screenSize === "lg" ? 11 : 11),
+        1
+      );
+      return getDateRange(monthsAgo, now, "month");
+    }
   };
 
-  const displayRange = getDisplayRange(orders);
+  const displayRange = getDisplayRange();
 
   const aggregateData = (orders: IOrderItem[]) => {
     const aggregated = orders.reduce((acc, order) => {
@@ -246,7 +245,6 @@ const OrdersChart = ({
               axisLine={false}
               tickFormatter={(value) => value.slice(0, 3)}
             />
-            <YAxis yAxisId="left" orientation="left" />
             <YAxis yAxisId="left" orientation="left" />
             <YAxis
               yAxisId="right"
