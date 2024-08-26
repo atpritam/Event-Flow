@@ -39,7 +39,7 @@ const MobileNav = () => {
             <Separator />
             <NavItems setOpen={setOpen} />
             <button
-              className="md:hidden flex justify-start mt-[-6px]"
+              className="md:hidden flex justify-start mt-[-5px]"
               onClick={() => setOpen(false)}
             >
               <Link href="https://buymeacoffee.com/pritamchk" target="_blank">
