@@ -6,7 +6,6 @@ import {
   getEventById,
   getRelatedEventsByCategory,
 } from "@/lib/actions/event.actions";
-import { formatDateTime } from "@/lib/utils";
 import { auth } from "@clerk/nextjs/server";
 import Image from "next/image";
 import React from "react";
@@ -14,7 +13,6 @@ import EventLink from "@/components/shared/EventLink";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import DeleteConfirmation from "@/components/shared/DeleteConfirmation";
-import ClientRender from "@/components/shared/ClientRender";
 import EventDate from "./EventDate";
 
 const EventDetails = async ({ params, searchParams }: SearchParamProps) => {

@@ -11,21 +11,22 @@ import {
 import { handleError } from "../utils";
 import { revalidatePath } from "next/cache";
 import { connectToDatabase } from "../database";
-import Event from "../database/models/event.model";
+import Event, { IEvent } from "../database/models/event.model";
 import User from "../database/models/user.model";
-import Category from "../database/models/category.model";
 import { isValidObjectId } from "mongoose";
 import { auth } from "@clerk/nextjs/server";
+import { getCategoryByName } from "./category.actions";
 
-const getCategoryByName = async (name: string) => {
-  return Category.findOne({ name: { $regex: name, $options: "i" } });
-};
-
-export const createEvent = async ({
-  event,
-  userId,
-  path,
-}: CreateEventParams) => {
+/**
+ * Creates a new event.
+ *
+ * @param {CreateEventParams} params - The parameters for creating the event.
+ * @param {Event} params.event - The event object.
+ * @param {string} params.userId - The ID of the user creating the event.
+ * @returns {Promise<object>} - A promise that resolves to the created event.
+ * @throws {Error} - If the organizer is not found or an error occurs during the creation process.
+ */
+export const createEvent = async ({ event, userId }: CreateEventParams) => {
   try {
     await connectToDatabase();
 
@@ -47,6 +48,13 @@ export const createEvent = async ({
   }
 };
 
+/**
+ * Retrieves an event by its ID.
+ *
+ * @param {string} eventId - The ID of the event to retrieve.
+ * @returns {Promise<object>} - A promise that resolves to the retrieved event.
+ * @throws {Error} - If the event is not found.
+ */
 export const getEventById = async (eventId: string) => {
   try {
     await connectToDatabase();
@@ -65,6 +73,12 @@ export const getEventById = async (eventId: string) => {
   }
 };
 
+/**
+ * Retrieves all events, with pagination.
+ *
+ * @param {GetAllEventsParams} params - The parameters for retrieving events.
+ * @returns {Promise<{ data: IEvent[], totalPages: number }>} - The retrieved events and the total number of pages.
+ */
 export async function getAllEvents({
   query,
   limit = 6,
@@ -106,6 +120,16 @@ export async function getAllEvents({
   }
 }
 
+/**
+ * Deletes an event.
+ *
+ * @param {DeleteEventParams} params - The parameters for deleting an event.
+ * @param {string} params.eventId - The ID of the event to delete.
+ * @param {string} params.path - The path of the event.
+ * @param {string} params.userId - The ID of the user deleting the event.
+ * @returns {Promise<void>} - A promise that resolves when the event is deleted.
+ * @throws {Error} - If the input is invalid, unauthorized, or the event is not found.
+ */
 export async function deleteEvent({
   eventId,
   path,
@@ -140,6 +164,13 @@ export async function deleteEvent({
   }
 }
 
+/**
+ * Updates an event.
+ *
+ * @param {UpdateEventParams} params - The parameters for updating the event.
+ * @returns {Promise<IEvent>} - A promise that resolves to the updated event.
+ * @throws {Error} - If the input is invalid, the user is unauthorized, or the event is not found.
+ */
 export async function updateEvent({ userId, event, path }: UpdateEventParams) {
   try {
     if (
@@ -177,6 +208,12 @@ export async function updateEvent({ userId, event, path }: UpdateEventParams) {
   }
 }
 
+/**
+ * Retrieves related events by category.
+ *
+ * @param {GetRelatedEventsByCategoryParams} params - The parameters for retrieving related events.
+ * @returns {Promise<{ data: IEvent[]; totalPages: number }>} - The retrieved events and total number of pages.
+ */
 export async function getRelatedEventsByCategory({
   categoryId,
   eventId,
@@ -209,6 +246,15 @@ export async function getRelatedEventsByCategory({
   }
 }
 
+/**
+ * Retrieves events created by user.
+ *
+ * @param {GetEventsByUserParams} params - The parameters for retrieving events.
+ * @param {string} params.userId - The ID of the user.
+ * @param {number} [params.limit=6] - The maximum number of events to retrieve per page.
+ * @param {number} params.page - The page number.
+ * @returns {Promise<{ data: IEvent[]; totalPages: number }>} - The retrieved events and total number of pages.
+ */
 export async function getEventsByUser({
   userId,
   limit = 6,
@@ -238,6 +284,13 @@ export async function getEventsByUser({
   }
 }
 
+/**
+ * Checks if tickets are still available, based on the event's end date.
+ *
+ * @param eventId - The ID of the event to check.
+ * @returns An object containing the availability of tickets.
+ * @throws If the event is not found or an error occurs.
+ */
 export async function checkValidity(eventId: string) {
   try {
     const event = await Event.findById(eventId);

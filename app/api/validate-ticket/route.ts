@@ -4,6 +4,13 @@ import Event from "@/lib/database/models/event.model";
 import Order from "@/lib/database/models/order.model";
 import User from "@/lib/database/models/user.model";
 
+/**
+ * Validates a ticket based on the provided request.
+ *
+ * @param req - The request object containing the orderId, eventId, organizerId.
+ * @returns A JSON response indicating whether the ticket is valid or not and the ticket information.
+ * @throws If there is an error validating the ticket, an error response is returned.
+ */
 export async function POST(req: Request) {
   try {
     const { orderId, eventId, organizerId } = await req.json();

@@ -2,7 +2,7 @@ import React from "react";
 import { SearchParamProps } from "@/app/types";
 import { getAllOrdersByUser } from "@/lib/actions/order.action";
 import OrdersChart from "../OrdersChart";
-import ClientOrders from "../Orders";
+import ClientOrders from "../OrdersTable";
 import { auth } from "@clerk/nextjs/server";
 import { IOrderItem } from "@/lib/database/models/order.model";
 

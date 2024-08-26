@@ -270,7 +270,7 @@ export function OrdersDataTable({
   );
 }
 
-export default function ClientOrders({
+export default function OrdersTable({
   orders,
   titleClickable,
 }: {

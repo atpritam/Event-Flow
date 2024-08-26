@@ -10,13 +10,20 @@ import { redirect } from "next/navigation";
 import Stripe from "stripe";
 import { handleError } from "../utils";
 import { connectToDatabase } from "../database";
-import Order from "../database/models/order.model";
+import Order, { IOrder, IOrderItem } from "../database/models/order.model";
 import Event from "../database/models/event.model";
 import { ObjectId } from "mongodb";
 import User from "../database/models/user.model";
 import { isValidObjectId } from "mongoose";
 import { auth } from "@clerk/nextjs/server";
 
+/**
+ * Handles the checkout process for an order using Stripe.
+ *
+ * @param order - The order to be checked out.
+ * @returns Promise<void>
+ * @throws Error - If an error occurs during the checkout process.
+ */
 export const checkoutOrder = async (order: CheckoutOrderParams) => {
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
@@ -49,6 +56,12 @@ export const checkoutOrder = async (order: CheckoutOrderParams) => {
   }
 };
 
+/**
+ * Creates a new order and saves it to the database.
+ *
+ * @param order - The order parameters.
+ * @returns The newly created order.
+ */
 export const createOrder = async (order: CreateOrderParams) => {
   try {
     await connectToDatabase();
@@ -65,6 +78,16 @@ export const createOrder = async (order: CreateOrderParams) => {
   }
 };
 
+/**
+ * Retrieves orders related to a specific event for an authorized user(Organizer)
+ *
+ * @param {GetOrdersByEventParams} params - The parameters for retrieving orders.
+ * @param {string} params.searchString - The search string for filtering orders by buyer name.
+ * @param {string} params.eventId - The ID of the event.
+ * @param {string} params.userId - The ID of the user.
+ * @returns {Promise<IOrderItem[]>} - A promise that resolves to the retrieved orders.
+ * @throws {Error} - If the input is invalid, unauthorized, or the event is not found.
+ */
 export async function getOrdersByEvent({
   searchString,
   eventId,
@@ -142,6 +165,15 @@ export async function getOrdersByEvent({
   }
 }
 
+/**
+ * Retrieves all orders for every event created by the user(Organizer) based on search criteria.
+ *
+ * @param {GetAllOrdersParams} params - The parameters for retrieving orders.
+ * @param {string} params.searchString - The search string to filter orders by buyer name.
+ * @param {string} params.userId - The ID of the user to retrieve orders for.
+ * @returns {Promise<IOrderItem[]>} - A promise that resolves to an array of orders.
+ * @throws {Error} - If the user ID is invalid or unauthorized.
+ */
 interface GetAllOrdersParams {
   searchString: string;
   userId: string;
@@ -226,6 +258,15 @@ export async function getAllOrdersByUser({
   }
 }
 
+/**
+ * Retrieves orders placed by a specific user.
+ *
+ * @param {GetOrdersByUserParams} params - The parameters for retrieving orders.
+ * @param {string} params.userId - The ID of the user.
+ * @param {number} [params.limit=3] - The maximum number of orders to retrieve per page.
+ * @param {number} params.page - The page number.
+ * @returns {Promise<{ data: IOrderItem[]; totalPages: number }>} The retrieved orders and the total number of pages.
+ */
 export async function getOrdersByUser({
   userId,
   limit = 3,
@@ -265,6 +306,16 @@ export async function getOrdersByUser({
   }
 }
 
+/**
+ * Retrieves a specific order by ID for an authorized user(Organizer of the event)
+ *
+ * @param orderId - The ID of the order to retrieve.
+ * @param userId - The ID of the user making the request.
+ * @returns The order object as a JSON string.
+ * @throws Error if the provided user ID or order ID is invalid.
+ * @throws Error if the user is unauthorized to access the order.
+ * @throws Error if the order is not found.
+ */
 export async function getOrderByID(orderId: string, userId: string) {
   try {
     if (!isValidObjectId(userId) || !isValidObjectId(orderId)) {
@@ -296,6 +347,18 @@ export async function getOrderByID(orderId: string, userId: string) {
   }
 }
 
+/**
+ * Marks an order/booking as used by the buyer
+ * This is done by the organizer of the event
+ *
+ * @param {string} orderId - The ID of the order.
+ * @param {string} userId - The ID of the user.
+ * @returns {Promise<IOrderItem>} - A promise that resolves to the updated order object.
+ * @throws {Error} - If the provided user ID or order ID is invalid.
+ * @throws {Error} - If the user is unauthorized to mark the order as used.
+ * @throws {Error} - If the order or event associated with the order is not found.
+ * @throws {Error} - If the order is not found after the update.
+ */
 export const markOrderAsUsed = async (orderId: string, userId: string) => {
   try {
     if (!isValidObjectId(userId) || !isValidObjectId(orderId)) {

@@ -2,7 +2,7 @@ import React from "react";
 import { SearchParamProps } from "@/app/types";
 import { getOrdersByEvent } from "@/lib/actions/order.action";
 import OrdersChart from "./OrdersChart";
-import ClientOrders from "./Orders";
+import OrdersTable from "./OrdersTable";
 import { auth } from "@clerk/nextjs/server";
 import { getEventById } from "@/lib/actions/event.actions";
 
@@ -33,7 +33,7 @@ const Orders = async ({ searchParams }: SearchParamProps) => {
         </h4>
       </section>
       <OrdersChart orders={totalOrders} />
-      <ClientOrders orders={orders} />
+      <OrdersTable orders={orders} />
     </div>
   );
 };
