@@ -147,13 +147,19 @@ export async function getOrdersByEvent({
           buyer: {
             $concat: ["$buyer.firstName", " ", "$buyer.lastName"],
           },
+          orderID: { $toString: "$_id" },
         },
       },
       {
         $match: {
           $and: [
             { eventId: eventObjectId },
-            { buyer: { $regex: RegExp(searchString, "i") } },
+            {
+              $or: [
+                { buyer: { $regex: RegExp(searchString, "i") } },
+                { orderID: { $regex: RegExp(searchString, "i") } },
+              ],
+            },
           ],
         },
       },
@@ -187,24 +193,17 @@ export async function getAllOrdersByUser({
     if (!isValidObjectId(userId)) {
       throw new Error("Invalid Input");
     }
-
     const { sessionClaims } = auth();
     const user = sessionClaims?.userId as string;
-
     if (userId !== user) {
       throw new Error("Unauthorized");
     }
-
     await connectToDatabase();
-
     const userEvents = await Event.find({ organizer: userId }).select("_id");
-
     const eventIds = userEvents.map((event) => event._id);
-
     if (eventIds.length === 0) {
       return [] as IOrderItem[];
     }
-
     const orders = await Order.aggregate([
       {
         $match: {
@@ -243,21 +242,23 @@ export async function getAllOrdersByUser({
           buyer: {
             $concat: ["$buyer.firstName", " ", "$buyer.lastName"],
           },
+          orderID: { $toString: "$_id" },
         },
       },
       {
         $match: {
-          buyer: { $regex: RegExp(searchString, "i") },
+          $or: [
+            { buyer: { $regex: RegExp(searchString, "i") } },
+            { orderID: { $regex: RegExp(searchString, "i") } },
+          ],
         },
       },
     ]);
-
     return JSON.parse(JSON.stringify(orders as IOrderItem[]));
   } catch (error) {
     handleError(error);
   }
 }
-
 /**
  * Retrieves orders placed by a specific user.
  *

@@ -146,7 +146,7 @@ export function OrdersDataTable({
     <div>
       <div className="flex items-start py-4 flex-col sm:flex-row gap-1 sm:gap-4">
         <section className="sm:flex-1 w-full">
-          <Search placeholder="Search Buyer" />
+          <Search placeholder="Search Order ID or Buyer" />
         </section>
         <div className="mt-2 sm:mt-1 flex gap-2">
           <DropdownMenu>
