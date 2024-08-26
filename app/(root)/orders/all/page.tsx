@@ -2,9 +2,9 @@ import React from "react";
 import { SearchParamProps } from "@/app/types";
 import { getAllOrdersByUser } from "@/lib/actions/order.action";
 import OrdersChart from "../OrdersChart";
-import ClientOrders from "../OrdersTable";
 import { auth } from "@clerk/nextjs/server";
 import { IOrderItem } from "@/lib/database/models/order.model";
+import OrdersTable from "../OrdersTable";
 
 const AllOrders = async ({ searchParams }: SearchParamProps) => {
   const { sessionClaims } = auth();
@@ -30,7 +30,7 @@ const AllOrders = async ({ searchParams }: SearchParamProps) => {
       <OrdersChart
         ordersPromise={totalOrdersPromise as Promise<IOrderItem[]>}
       />
-      <ClientOrders
+      <OrdersTable
         ordersPromise={ordersPromise as Promise<IOrderItem[]>}
         titleClickable={true}
       />

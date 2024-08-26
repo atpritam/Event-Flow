@@ -78,7 +78,7 @@ export function OrdersDataTable({
         const eventId = row.original.eventId;
         return titleClickable ? (
           <EventLink
-            href={`${window.location.origin}/orders?eventId=${eventId}`}
+            href={`${window.location.origin}/orders?eventId=${eventId}&eventTitle=${eventTitle}`}
             className="text-blue-600 hover:underline"
           >
             {eventTitle}

@@ -103,7 +103,7 @@ const EventCard = ({
 
             {hasOrderLink && isEventCreator && (
               <Link
-                href={`/orders?eventId=${event._id}`}
+                href={`/orders?eventId=${event._id}&eventTitle=${event.title}`}
                 className="flex gap-2"
                 onClick={() => setLoading(true)}
               >
