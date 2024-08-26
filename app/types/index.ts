@@ -32,6 +32,7 @@ export type CreateEventParams = {
     isFree: boolean;
     url: string;
   };
+  path?: string;
 };
 
 export type UpdateEventParams = {
