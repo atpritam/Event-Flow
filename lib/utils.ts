@@ -108,10 +108,22 @@ export function exportToCSV(
   data: IOrderItem[],
   columns: ColumnDef<IOrderItem>[]
 ) {
-  const header = columns.map((col) =>
-    //@ts-ignore
-    typeof col.header === "string" ? col.header : col.show
-  );
+  const header = columns.map((col) => {
+    if (typeof col.header === "function") {
+      //@ts-ignore
+      if (col.accessorKey === "createdAt") {
+        return "Date";
+        //@ts-ignore
+      } else if (col.accessorKey === "totalAmount") {
+        return "Amount";
+      } else {
+        return "Unknown";
+      }
+    } else {
+      return typeof col.header === "string" ? col.header : "";
+    }
+  });
+
   const rows = data.map((row) =>
     columns.map((col) => {
       //@ts-ignore
@@ -120,6 +132,8 @@ export function exportToCSV(
 
       if (key === "createdAt") {
         return formatDateTime(value as Date).dateOnly;
+      } else if (key === "totalAmount") {
+        return formatPrice(value as string);
       }
 
       return value;
@@ -149,10 +163,21 @@ export async function exportToExcel(
   const worksheet = workbook.addWorksheet("Orders");
 
   worksheet.addRow(
-    columns.map((col) =>
-      //@ts-ignore
-      typeof col.header === "string" ? col.header : col.show
-    )
+    columns.map((col) => {
+      if (typeof col.header === "function") {
+        //@ts-ignore
+        if (col.accessorKey === "createdAt") {
+          return "Date";
+          //@ts-ignore
+        } else if (col.accessorKey === "totalAmount") {
+          return "Amount";
+        } else {
+          return "Unknown";
+        }
+      } else {
+        return typeof col.header === "string" ? col.header : "";
+      }
+    })
   );
 
   data.forEach((row) => {
@@ -162,6 +187,8 @@ export async function exportToExcel(
       const value = row[key];
       if (key === "createdAt") {
         return formatDateTime(value as Date).dateOnly;
+      } else if (key === "totalAmount") {
+        return formatPrice(value as string);
       }
       return value;
     });
@@ -191,10 +218,21 @@ export function exportToPDF(
   doc.setFontSize(18);
   doc.text("Orders Report", 105, 20, { align: "center" });
 
-  const header = columns.map((col) =>
-    //@ts-ignore
-    typeof col.header === "string" ? col.header : col.show
-  );
+  const header = columns.map((col) => {
+    if (typeof col.header === "function") {
+      //@ts-ignore
+      if (col.accessorKey === "createdAt") {
+        return "Date";
+        //@ts-ignore
+      } else if (col.accessorKey === "totalAmount") {
+        return "Amount";
+      } else {
+        return "Unknown";
+      }
+    } else {
+      return typeof col.header === "string" ? col.header : "";
+    }
+  });
 
   const tableData = data.map((row) => {
     return columns.map((col: ColumnDef<IOrderItem>) => {
@@ -203,6 +241,8 @@ export function exportToPDF(
       const value = row[key];
       if (key === "createdAt") {
         return formatDateTime(value as Date).dateOnly;
+      } else if (key === "totalAmount") {
+        return formatPrice(value as string);
       }
       return value;
     });
