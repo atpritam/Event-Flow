@@ -93,6 +93,7 @@ export function OrdersDataTable({
     },
     {
       accessorKey: "createdAt",
+      show: "Created",
       header: ({ column }) => {
         return (
           <Button
@@ -108,6 +109,7 @@ export function OrdersDataTable({
     },
     {
       accessorKey: "totalAmount",
+      show: "Amount",
       header: ({ column }) => {
         return (
           <Button

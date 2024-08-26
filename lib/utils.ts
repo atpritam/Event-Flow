@@ -108,7 +108,10 @@ export function exportToCSV(
   data: IOrderItem[],
   columns: ColumnDef<IOrderItem>[]
 ) {
-  const header = columns.map((col) => col.header ?? "");
+  const header = columns.map((col) =>
+    //@ts-ignore
+    typeof col.header === "string" ? col.header : col.show
+  );
   const rows = data.map((row) =>
     columns.map((col) => {
       //@ts-ignore
@@ -145,7 +148,12 @@ export async function exportToExcel(
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet("Orders");
 
-  worksheet.addRow(columns.map((col) => col.header ?? ""));
+  worksheet.addRow(
+    columns.map((col) =>
+      //@ts-ignore
+      typeof col.header === "string" ? col.header : col.show
+    )
+  );
 
   data.forEach((row) => {
     const rowData = columns.map((col) => {
@@ -183,7 +191,10 @@ export function exportToPDF(
   doc.setFontSize(18);
   doc.text("Orders Report", 105, 20, { align: "center" });
 
-  const header = columns.map((col: ColumnDef<IOrderItem>) => col.header ?? "");
+  const header = columns.map((col) =>
+    //@ts-ignore
+    typeof col.header === "string" ? col.header : col.show
+  );
 
   const tableData = data.map((row) => {
     return columns.map((col: ColumnDef<IOrderItem>) => {
