@@ -24,7 +24,7 @@ const Orders = async ({ searchParams }: SearchParamProps) => {
   });
 
   return (
-    <div className="px-2">
+    <div className="px-2 overflow-x-hidden sm:overflow-x-auto">
       <section className="bg-primary-50 bg-dotted-pattern bg-cover bg-center py-5 md:py-10">
         <h3 className="wrapper h3-bold text-center sm:text-left">Orders</h3>
         <h4 className="wrapper text-center sm:text-left mt-[-20px]">
