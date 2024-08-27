@@ -1,4 +1,4 @@
-<p align="center">
+no<p align="center">
   <img src="Images/Event-Flow.gif" alt="Event Flow GIF" style="width: 100%; height: auto;">
 </p>
 
@@ -366,18 +366,7 @@ This robust validation process ensures that only legitimate tickets are accepted
 
 ## File Uploads
 
-For uploading event images, the app uses UploadThing. The integration is seamless and supports various file types.
-
-### Example Usage
-
-```typescript
-import { useUploadThing } from "@uploadthing/react";
-
-export const uploadEventImage = async (file: File) => {
-  const { data } = await useUploadThing("YOUR_UPLOADTHING_ENDPOINT", file);
-  return data;
-};
-```
+For uploading event images, the app uses [UploadThing](https://uploadthing.com/). The integration is seamless and supports various file types.
 
 ## Contributing
 
