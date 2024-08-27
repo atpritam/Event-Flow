@@ -234,7 +234,7 @@ const OrdersChart = ({
         </div>
         <ChartContainer
           config={chartConfig}
-          className="h-[300px] md:h-[350px] lg:h-[450px] w-full"
+          className="h-[300px] md:h-[350px] lg:h-[450px] w-[110%] sm:w-full ml-[-2%] sm:ml-0"
         >
           <ComposedChart data={chartData}>
             <CartesianGrid vertical={false} />

@@ -104,10 +104,19 @@ export function removeKeysFromQuery({
   );
 }
 
+function spliceColumns(columns: ColumnDef<IOrderItem>[]) {
+  for (let i = 0; i < columns.length; i++) {
+    if (columns[i].id === "actions" || columns[i].id === "select") {
+      columns.splice(i, 1);
+    }
+  }
+}
+
 export function exportToCSV(
   data: IOrderItem[],
   columns: ColumnDef<IOrderItem>[]
 ) {
+  spliceColumns(columns);
   const header = columns.map((col) => {
     if (typeof col.header === "function") {
       //@ts-ignore
@@ -159,6 +168,7 @@ export async function exportToExcel(
   data: IOrderItem[],
   columns: ColumnDef<IOrderItem>[]
 ) {
+  spliceColumns(columns);
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet("Orders");
 
@@ -213,6 +223,7 @@ export function exportToPDF(
   data: IOrderItem[],
   columns: ColumnDef<IOrderItem>[]
 ) {
+  spliceColumns(columns);
   const doc = new jsPDF();
 
   doc.setFontSize(18);
