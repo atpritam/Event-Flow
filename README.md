@@ -1,6 +1,9 @@
 <p align="center">
-  <img src="Images/Event-Flow.gif" alt="Event Flow GIF" style="width: 100%; height: auto;">
+  <a href="https://event-flow-alpha.vercel.app" target="_blank">
+    <img src="Images/Event-Flow.gif" alt="Event Flow GIF" style="width: 100%; height: auto;">
+  </a>
 </p>
+
 
 # Event Flow
 
