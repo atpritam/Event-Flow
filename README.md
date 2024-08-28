@@ -1,4 +1,4 @@
-no<p align="center">
+<p align="center">
   <img src="Images/Event-Flow.gif" alt="Event Flow GIF" style="width: 100%; height: auto;">
 </p>
 
